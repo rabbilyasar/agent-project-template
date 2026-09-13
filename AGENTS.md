@@ -1,5 +1,12 @@
 # Project Agent Instructions
 
+## Vendor Neutrality
+
+This file is the canonical, vendor-neutral source of agent instructions. It is not specific to any AI
+provider or tool. A `CLAUDE.md` file, if present, only imports this file for Claude Code's benefit and
+must never duplicate or diverge from it. Any other vendor-specific entry point must do the same: import,
+don't fork.
+
 ## Project Context
 
 This repository is an agent-managed software project.
@@ -28,6 +35,10 @@ Use the following hierarchy:
 8. Source code and tests for implemented behavior.
 
 If authoritative sources conflict, stop and identify the conflict rather than silently choosing one.
+
+`docs/development.md` (setup, run, lint, test, and validation commands) and `docs/troubleshooting.md`
+(known problems and solutions) are operational reference, not part of this conflict-resolution hierarchy —
+consult them for how to do something, not for what to build.
 
 ## Operating Principles
 
@@ -98,6 +109,9 @@ Keep `.agent/current-task.md` focused on the active task. Do not turn it into a 
 
 ## Validation
 
+Look up this project's actual commands in `docs/development.md` rather than guessing or rediscovering them
+each session.
+
 Validation should match the scope and risk of the change.
 
 When relevant, use this order:
@@ -137,7 +151,7 @@ Record durable project knowledge in the appropriate location:
 - `docs/requirements.md` — requirements and acceptance expectations.
 - `docs/architecture.md` — system structure and technical architecture.
 - `docs/decisions.md` — significant architectural and technical decisions with rationale.
-- `docs/development.md` — development, testing, and validation procedures.
+- `docs/development.md` — this project's actual setup, run, lint, test, and validation commands.
 - `docs/troubleshooting.md` — known problems and their solutions.
 - `.agent/state.md` — concise current project state.
 - `.agent/roadmap.md` — milestones and future priorities.

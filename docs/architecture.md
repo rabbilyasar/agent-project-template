@@ -2,32 +2,64 @@
 
 ## System Overview
 
-<!-- Describe the system at a high level. -->
+<!-- Describe the system at a high level once the architecture is defined. -->
+
+Not defined.
 
 ## Components
 
-<!-- List major components and their responsibilities. -->
+<!-- List the major components and their responsibilities. -->
+
+None defined.
 
 ## Data Flow
 
-<!-- Describe important data flows. -->
+<!-- Describe important data flows between components. -->
 
-## External Integrations
+Not defined.
 
-<!-- APIs, services, databases, queues, etc. -->
+## Interfaces
+
+<!-- APIs, events, queues, external services, or other important interfaces. -->
+
+None defined.
+
+## Data Storage
+
+<!-- Databases, files, caches, object storage, or other persistence mechanisms. -->
+
+None defined.
 
 ## Security Boundaries
 
-<!-- Authentication, authorization, secrets, trust boundaries. -->
+<!-- Authentication, authorization, trust boundaries, secrets, and sensitive data handling. -->
+
+Not defined.
+
+## External Dependencies
+
+<!-- External services, APIs, infrastructure, or libraries that materially affect the architecture. -->
+
+None defined.
 
 ## Deployment
 
-<!-- Runtime and deployment architecture. -->
+<!-- Describe how the system is built, deployed, and operated once defined. -->
 
-## Testing Strategy
+Not defined.
 
-<!-- Unit, integration, end-to-end, and other validation layers. -->
+## Architectural Constraints
 
-## Architecture Constraints
+<!-- Technical or operational constraints that shape the architecture. -->
 
-<!-- Important constraints the implementation must respect. -->
+None defined.
+
+## Architecture Rules
+
+- Follow documented architectural decisions.
+- Prefer existing project patterns over introducing unnecessary alternatives.
+- Keep component responsibilities clear.
+- Avoid unnecessary coupling between components.
+- Document significant architectural changes.
+- Record the rationale for significant decisions in `docs/decisions.md`.
+- Keep implementation details out of this document unless they materially affect the architecture.

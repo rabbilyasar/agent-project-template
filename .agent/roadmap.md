@@ -49,4 +49,4 @@ M1 — Foundation
 ## Last Updated
 <!-- YYYY-MM-DD -->
 
-YYYY-MM-DD
+{{INIT_DATE}}

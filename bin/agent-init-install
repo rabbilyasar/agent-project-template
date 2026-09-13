@@ -7,20 +7,23 @@ repo_root="$(cd -- "$script_dir/.." && pwd)"
 install_dir="$HOME/.local/bin"
 template_dir="$HOME/.local/share/agent-init"
 
-files=(
-    "AGENTS.md"
-    ".agent/current-task.md"
-    ".agent/roadmap.md"
-    ".agent/state.md"
-    "docs/requirements.md"
-    "docs/architecture.md"
-    "docs/decisions.md"
-    "docs/development.md"
-    "docs/troubleshooting.md"
+# "<source relative to repo root>:<destination relative to template dir>"
+# A directory entry is mirrored recursively, so new files added under
+# .agent/ or docs/ in this repo are picked up automatically -- nothing here
+# needs to change when the template's contents grow.
+manifest=(
+    "AGENTS.md:AGENTS.md"
+    "CLAUDE.md:CLAUDE.md"
+    "PROJECT_README.md:README.md"
+    ".agent:.agent"
+    "docs:docs"
 )
 
 usage() {
     printf 'Usage: %s [--help|-h]\n' "$(basename "$0")"
+    printf '\n'
+    printf 'Installs agent-init to %s\n' "$install_dir"
+    printf 'and the project template to %s\n' "$template_dir"
 }
 
 if [[ $# -eq 1 && ( "$1" == "--help" || "$1" == "-h" ) ]]; then
@@ -33,28 +36,110 @@ if [[ $# -ne 0 ]]; then
     exit 2
 fi
 
-for file in "${files[@]}"; do
-    if [[ ! -f "$repo_root/$file" ]]; then
-        printf 'Error: template file not found: %s\n' "$repo_root/$file" >&2
-        exit 1
-    fi
-done
-
 if [[ ! -f "$repo_root/bin/agent-init" ]]; then
     printf 'Error: initializer not found: %s\n' "$repo_root/bin/agent-init" >&2
     exit 1
 fi
 
+# Preflight: validate every manifest source exists before installing
+# anything, so a missing template source cannot leave a half-installed tool
+# behind (an agent-init with no template, or a template missing a file).
+for entry in "${manifest[@]}"; do
+    src="${entry%%:*}"
+    if [[ ! -e "$repo_root/$src" ]]; then
+        printf 'Error: template source not found: %s\n' "$repo_root/$src" >&2
+        exit 1
+    fi
+done
+
+# Enumerate every (source, destination) file pair the installer will write,
+# up front -- mirrors bin/agent-init's own preflight. Doing this before
+# touching anything means a destination-type collision anywhere in the
+# tree, not just at $template_dir itself, is detected before any file is
+# written, so a failure here can never leave a partially refreshed template
+# behind.
+src_files=()
+dest_files=()
+for entry in "${manifest[@]}"; do
+    src="${entry%%:*}"
+    dest="${entry#*:}"
+    src_path="$repo_root/$src"
+
+    if [[ -d "$src_path" ]]; then
+        while IFS= read -r relpath; do
+            src_files+=("$src_path/$relpath")
+            dest_files+=("$dest/$relpath")
+        done < <(cd "$src_path" && find . -type f | sed 's#^\./##' | sort)
+    else
+        src_files+=("$src_path")
+        dest_files+=("$dest")
+    fi
+done
+
+# Preflight the destinations too. A file where the template expects a
+# directory (or vice versa) would otherwise abort mid-copy via a plain
+# mkdir/install failure -- or, worse, be silently absorbed by `install`
+# treating an existing directory as an install target -- after some earlier
+# files had already been written.
+if [[ -e "$install_dir" && ! -d "$install_dir" ]]; then
+    printf 'Error: destination exists and is not a directory: %s\n' "$install_dir" >&2
+    exit 1
+fi
+
+if [[ -e "$install_dir/agent-init" && ! -f "$install_dir/agent-init" ]]; then
+    printf 'Error: destination exists and is not a regular file: %s\n' "$install_dir/agent-init" >&2
+    exit 1
+fi
+
+if [[ -e "$template_dir" && ! -d "$template_dir" ]]; then
+    printf 'Error: destination exists and is not a directory: %s\n' "$template_dir" >&2
+    exit 1
+fi
+
+required_dirs=()
+while IFS= read -r dir; do
+    [[ -n "$dir" ]] && required_dirs+=("$dir")
+done < <(
+    for relpath in "${dest_files[@]}"; do
+        dir="$(dirname -- "$relpath")"
+        while [[ "$dir" != "." ]]; do
+            printf '%s\n' "$dir"
+            dir="$(dirname -- "$dir")"
+        done
+    done | sort -u
+)
+
+for dir in "${required_dirs[@]}"; do
+    destination_dir="$template_dir/$dir"
+    if [[ -e "$destination_dir" && ! -d "$destination_dir" ]]; then
+        printf 'Error: destination exists and is not a directory: %s\n' "$destination_dir" >&2
+        exit 1
+    fi
+done
+
+for relpath in "${dest_files[@]}"; do
+    destination="$template_dir/$relpath"
+    if [[ -e "$destination" && ! -f "$destination" ]]; then
+        printf 'Error: destination exists and is not a regular file: %s\n' "$destination" >&2
+        exit 1
+    fi
+done
+
+# --- Preflight complete. Nothing below this line may fail partway through
+# --- without leaving only already-installed (i.e. safely re-runnable) state.
+
 mkdir -p "$install_dir" "$template_dir"
 
 install -m 755 "$repo_root/bin/agent-init" "$install_dir/agent-init"
 
-for file in "${files[@]}"; do
-    destination="$template_dir/$file"
-    mkdir -p "$(dirname -- "$destination")"
-    install -m 644 "$repo_root/$file" "$destination"
+installed=0
+for i in "${!dest_files[@]}"; do
+    dest_path="$template_dir/${dest_files[$i]}"
+    mkdir -p "$(dirname -- "$dest_path")"
+    install -m 644 "${src_files[$i]}" "$dest_path"
+    installed=$((installed + 1))
 done
 
 printf 'Installed agent-init to: %s\n' "$install_dir/agent-init"
 printf 'Installed templates to: %s\n' "$template_dir"
-printf 'Templates installed: %d\n' "${#files[@]}"
+printf 'Templates installed: %d\n' "$installed"

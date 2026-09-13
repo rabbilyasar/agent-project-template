@@ -3,6 +3,12 @@ set -euo pipefail
 
 usage() {
     printf 'Usage: %s <project-directory>\n' "$(basename "$0")"
+    printf '\n'
+    printf 'Copies the agent project template into <project-directory>, creating it if needed.\n'
+    printf 'Existing files are never overwritten -- rerunning is safe and resumes an interrupted run.\n'
+    printf '\n'
+    printf 'Environment:\n'
+    printf '  AGENT_INIT_TEMPLATE_DIR   Template source directory (default: ~/.local/share/agent-init)\n'
 }
 
 if [[ $# -eq 1 && ( "$1" == "--help" || "$1" == "-h" ) ]]; then
@@ -23,55 +29,100 @@ fi
 
 project_dir=$1
 
+if [[ -z "$project_dir" ]]; then
+    printf 'Error: project directory must not be empty\n' >&2
+    exit 2
+fi
+
 if [[ -e "$project_dir" && ! -d "$project_dir" ]]; then
     printf 'Error: not a directory: %s\n' "$project_dir" >&2
     exit 1
 fi
 
-mkdir -p "$project_dir"
-
 template_root="${AGENT_INIT_TEMPLATE_DIR:-$HOME/.local/share/agent-init}"
 
 if [[ ! -d "$template_root" ]]; then
     printf 'Error: template directory not found: %s\n' "$template_root" >&2
+    printf 'Run agent-init-install first, or set AGENT_INIT_TEMPLATE_DIR.\n' >&2
     exit 1
 fi
 
-files=(
-    "AGENTS.md"
-    ".agent/current-task.md"
-    ".agent/roadmap.md"
-    ".agent/state.md"
-    "docs/requirements.md"
-    "docs/architecture.md"
-    "docs/decisions.md"
-    "docs/development.md"
-    "docs/troubleshooting.md"
+if [[ ! -f "$template_root/AGENTS.md" ]]; then
+    printf 'Error: template is missing AGENTS.md: %s\n' "$template_root" >&2
+    printf 'The installed template looks incomplete or corrupt -- reinstall with agent-init-install.\n' >&2
+    exit 1
+fi
+
+# Enumerate every template file up front. Doing this before touching the
+# destination means a missing or incomplete template is detected before any
+# file is written, so a failure here can never leave a half-initialized
+# project behind.
+template_files=()
+while IFS= read -r relpath; do
+    template_files+=("$relpath")
+done < <(cd "$template_root" && find . -type f | sed 's#^\./##' | sort)
+
+if [[ ${#template_files[@]} -eq 0 ]]; then
+    printf 'Error: template directory is empty: %s\n' "$template_root" >&2
+    exit 1
+fi
+
+# Preflight the destination too. A file where the template expects a
+# directory (or vice versa) would otherwise abort mid-copy via a plain
+# mkdir/redirect failure, after some earlier files had already been written.
+required_dirs=()
+while IFS= read -r dir; do
+    [[ -n "$dir" ]] && required_dirs+=("$dir")
+done < <(
+    for relpath in "${template_files[@]}"; do
+        dir="$(dirname -- "$relpath")"
+        while [[ "$dir" != "." ]]; do
+            printf '%s\n' "$dir"
+            dir="$(dirname -- "$dir")"
+        done
+    done | sort -u
 )
 
+for dir in "${required_dirs[@]}"; do
+    destination_dir="$project_dir/$dir"
+    if [[ -e "$destination_dir" && ! -d "$destination_dir" ]]; then
+        printf 'Error: destination exists and is not a directory: %s\n' "$destination_dir" >&2
+        exit 1
+    fi
+done
+
+for relpath in "${template_files[@]}"; do
+    destination="$project_dir/$relpath"
+    if [[ -e "$destination" && ! -f "$destination" ]]; then
+        printf 'Error: destination exists and is not a regular file: %s\n' "$destination" >&2
+        exit 1
+    fi
+done
+
+# --- Preflight complete. Nothing below this line may fail partway through
+# --- without leaving only already-skippable (i.e. safely re-runnable) state.
+
+mkdir -p "$project_dir"
+
+init_date="$(date +%Y-%m-%d)"
 created=0
 skipped=0
 
-for file in "${files[@]}"; do
-    source="$template_root/$file"
-    destination="$project_dir/$file"
-
-    if [[ ! -f "$source" ]]; then
-        printf 'Error: template file not found: %s\n' "$source" >&2
-        exit 1
-    fi
+for relpath in "${template_files[@]}"; do
+    source="$template_root/$relpath"
+    destination="$project_dir/$relpath"
 
     if [[ -e "$destination" ]]; then
-        printf 'SKIP     %s\n' "$file"
-        ((skipped += 1))
+        printf 'SKIP     %s\n' "$relpath"
+        skipped=$((skipped + 1))
         continue
     fi
 
     mkdir -p "$(dirname -- "$destination")"
-    sed "s/YYYY-MM-DD/$(date +%Y-%m-%d)/g" "$source" > "$destination"
+    sed "s/{{INIT_DATE}}/$init_date/g" "$source" > "$destination"
 
-    printf 'CREATE   %s\n' "$file"
-    ((created += 1))
+    printf 'CREATE   %s\n' "$relpath"
+    created=$((created + 1))
 done
 
 printf '\nInitialized agent infrastructure in: %s\n' "$project_dir"

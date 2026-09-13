@@ -1,129 +1,73 @@
-# Development Workflow
+# Development
 
-## Overview
+This document records the concrete commands for setting up, running, and validating this project. For the
+task lifecycle, validation ordering, and Git rules that apply to every project, see `AGENTS.md` — do not
+duplicate that guidance here.
 
-Projects should follow a small, explicit lifecycle:
+Fill in each section below as the project's tooling is established. Keep entries copy-pasteable.
 
-1. Define the requirement.
-2. Define or confirm the architecture.
-3. Create the active task.
-4. Implement the smallest correct change.
-5. Validate the implementation.
-6. Verify affected user-visible flows when applicable.
-7. Review the final diff.
-8. Update durable project state and documentation.
-9. Commit when explicitly requested.
+## Setup
 
-## Starting a Task
+<!-- How to install dependencies and prepare a local environment. -->
 
-Before implementation:
+Not defined.
 
-- Read `.agent/state.md`.
-- Read `.agent/current-task.md` when an active task exists.
-- Read the relevant requirements.
-- Read relevant architecture and decision documentation.
-- Inspect the affected source code and tests.
-- Identify applicable constraints.
+## Run
 
-For a non-trivial task, populate `.agent/current-task.md` with:
+<!-- How to run the application or service locally. -->
 
-- Objective
-- Why
-- Requirements
-- Constraints
-- Relevant Context
-- Plan
-- Validation
-- Status
+Not defined.
 
-## Implementation
+## Formatter
 
-During implementation:
+<!-- Command to auto-format code. -->
 
-- Make the smallest correct change.
-- Follow existing project patterns.
-- Avoid unrelated refactoring.
-- Do not add dependencies unless necessary.
-- Keep the active task status accurate.
-- Update the plan if the implementation approach materially changes.
+Not defined.
 
-## Validation
+## Linter
 
-Use the smallest validation that provides meaningful evidence.
+<!-- Command to lint code. -->
 
-When applicable:
+Not defined.
 
-1. Formatter
-2. Linter
-3. Type checker
-4. Targeted unit tests
-5. Integration tests
-6. Browser or end-to-end verification
-7. Regression validation
+## Type Checker
 
-Do not claim a check passed unless it was actually run.
+<!-- Command to run static type checking, if applicable. -->
 
-## Browser Verification
+Not defined.
 
-When a change affects a user-visible browser flow:
+## Tests
 
-- Use the project's pinned browser-testing tooling.
-- Verify the affected flow.
-- Reproduce failures before changing the implementation when practical.
-- Inspect diagnostics when verification fails.
-- Fix the underlying issue.
-- Rerun the affected flow.
-- Perform appropriate regression verification.
+<!-- Command(s) to run unit and integration tests. -->
 
-Browser verification is not required for changes that cannot affect user-visible browser behavior.
+Not defined.
 
-## Completion
+## Browser / End-to-End Verification
 
-Before declaring a non-trivial task complete:
+<!-- Command to run browser or end-to-end tests, and which tool and version is pinned. -->
 
-- Confirm the requested behavior.
-- Confirm relevant acceptance criteria.
-- Run relevant validation.
-- Review the final diff.
-- Check for unintended changes.
-- Update `.agent/state.md` when durable project state changed.
-- Update relevant documentation when durable knowledge changed.
-- Record remaining concerns or limitations.
+Not defined.
 
-## Git
+## Build
 
-Git operations are deliberate.
+<!-- Command to produce a production build or release artifact. -->
 
-- Do not commit unless explicitly requested.
-- Do not push unless explicitly requested.
-- Do not rewrite history unless explicitly requested.
-- Review the diff before committing.
-- Keep commits focused and logically coherent.
-- Do not include unrelated changes.
+Not defined.
 
-## Documentation Updates
+## Continuous Integration
 
-Update documentation when implementation changes durable project knowledge.
+<!-- What CI runs, and where its configuration lives. -->
 
-Use:
+Not defined.
 
-- `docs/requirements.md` for requirements.
-- `docs/architecture.md` for architecture.
-- `docs/decisions.md` for significant decisions and rationale.
-- `docs/development.md` for development workflow.
-- `docs/troubleshooting.md` for known problems and solutions.
-- `.agent/state.md` for current durable state.
-- `.agent/roadmap.md` for milestones and priorities.
+## Notes
 
-Do not create activity logs or duplicate documentation.
+<!-- Anything else an agent needs to run this project's tooling correctly. -->
 
-## Task Completion Record
+None.
 
-After completing a task, update `.agent/current-task.md` so that it accurately reflects:
+## Development Rules
 
-- What was accomplished.
-- Which requirements were addressed.
-- What validation was performed.
-- The final status.
-
-Then update `.agent/state.md` if the project's durable state changed.
+- Keep commands copy-pasteable and accurate; verify a command still works before relying on it.
+- Update this file when tooling changes; do not let it drift from what the project actually uses.
+- Record process, lifecycle, and Git rules in `AGENTS.md`, not here — this file is commands only.
