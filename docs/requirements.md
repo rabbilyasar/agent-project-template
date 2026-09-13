@@ -1,40 +1,51 @@
 # Requirements
 
-This document defines what the system must do.
+## Product Goal
 
-Requirements are the product contract. Do not use this document as an implementation diary.
+<!-- What problem does the project solve? -->
 
-## Requirement Format
-
-Use:
-
-`REQ-<DOMAIN>-<NUMBER>`
-
-Each requirement should contain:
-
-- Requirement ID
-- Title
-- Requirement
-- Acceptance Criteria
-- Status
-
-## Statuses
-
-- Proposed
-- Accepted
-- In Progress
-- Implemented
-- Verified
-- Deprecated
+Not defined.
 
 ## Functional Requirements
 
-<!-- Add requirements here. -->
+<!-- Add accepted functional requirements using unique IDs such as REQ-001. -->
+
+None defined.
 
 ## Non-Functional Requirements
 
-<!-- Performance, security, reliability, accessibility, etc. -->
+<!-- Add non-functional requirements using unique IDs such as NFR-001. -->
+
+None defined.
 
 ## Constraints
 
-<!-- Business, technical, regulatory, or operational constraints. -->
+<!-- Known technical, product, legal, operational, or scope constraints. -->
+
+None defined.
+
+## Out of Scope
+
+<!-- Explicitly excluded functionality. -->
+
+None defined.
+
+## Requirement Status
+
+Use these statuses consistently:
+
+- **Draft** — proposed but not yet agreed.
+- **Accepted** — agreed and part of the project scope.
+- **Implemented** — implementation is complete.
+- **Verified** — implementation has been validated against its acceptance criteria.
+- **Rejected** — explicitly excluded or declined.
+
+## Requirement Rules
+
+- Every accepted requirement should have a unique ID.
+- Do not reuse requirement IDs.
+- Acceptance criteria should be observable and testable whenever practical.
+- Requirements describe intended behavior; implementation details belong in architecture or source code.
+- Changes to accepted requirements should be deliberate and documented.
+- Do not silently change or remove accepted requirements.
+- Do not invent requirements or acceptance criteria.
