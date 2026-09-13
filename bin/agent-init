@@ -68,7 +68,7 @@ for file in "${files[@]}"; do
     fi
 
     mkdir -p "$(dirname -- "$destination")"
-    cp -- "$source" "$destination"
+    sed "s/YYYY-MM-DD/$(date +%Y-%m-%d)/g" "$source" > "$destination"
 
     printf 'CREATE   %s\n' "$file"
     ((created += 1))

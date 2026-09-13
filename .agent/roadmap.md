@@ -1,35 +1,52 @@
-# Roadmap
+# Project Roadmap
 
-The roadmap describes major project milestones.
+## Vision
+<!-- What does this project ultimately aim to accomplish? -->
 
-Do not use it as a task diary.
+Not defined.
 
-## Current Phase
+## Milestones
+<!-- Major outcomes, not individual implementation tasks. -->
 
-Phase 1 — Foundation
+### M1 — Foundation
+- [ ] Define project requirements
+- [ ] Define system architecture
+- [ ] Establish development and validation workflow
 
-## Phase 1 — Foundation
+### M2 — Core Implementation
+- [ ] Implement the core functionality
+- [ ] Add relevant automated tests
+- [ ] Validate critical user flows
 
-- [ ] Define requirements
-- [ ] Establish architecture
-- [ ] Establish development workflow
+### M3 — Hardening
+- [ ] Address known issues
+- [ ] Improve reliability and observability
+- [ ] Complete regression validation
 
-## Phase 2 — Core Implementation
+### M4 — Release
+- [ ] Confirm release requirements
+- [ ] Perform final validation
+- [ ] Document deployment and operational procedures
 
-- [ ] Define project-specific milestones
+## Current Priority
+<!-- Identify the single most important milestone or outcome right now. -->
 
-## Phase 3 — Validation
+M1 — Foundation
 
-- [ ] Complete automated testing
-- [ ] Complete integration validation
+## Out of Scope
+<!-- Explicitly excluded work. Prevents agents from expanding scope. -->
 
-## Phase 4 — Production
+- None.
 
-- [ ] Define deployment strategy
-- [ ] Define observability
-- [ ] Define backup/recovery requirements
+## Completion Criteria
+<!-- What must be true for the roadmap to be considered complete? -->
 
-## Phase 5 — Maintenance
+- All required milestones are complete.
+- Requirements are satisfied.
+- Validation has been performed.
+- Known blocking issues are resolved.
 
-- [ ] Define maintenance procedures
-- [ ] Define upgrade strategy
+## Last Updated
+<!-- YYYY-MM-DD -->
+
+YYYY-MM-DD

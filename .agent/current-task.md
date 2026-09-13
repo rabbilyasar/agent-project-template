@@ -1,33 +1,34 @@
 # Current Task
 
-## Task ID
-
-None
-
 ## Objective
+<!-- What exactly needs to be accomplished? -->
 
-No active task.
+## Why
+<!-- Why is this task needed? What problem does it solve? -->
 
 ## Requirements
+<!-- Specific requirements and acceptance criteria for this task. -->
 
-None
-
-## Acceptance Criteria
-
-None
+- [ ] Requirement 1
 
 ## Constraints
+<!-- Technical, product, compatibility, security, or scope constraints. -->
 
-None
+## Relevant Context
+<!-- Existing architecture, files, decisions, or prior work the agent must know. -->
 
-## Implementation Notes
+## Plan
+<!-- Keep this short. Update it if the implementation approach changes. -->
 
-None
+1. Inspect the relevant code and documentation.
+2. Implement the smallest correct change.
+3. Validate the change.
+4. Review the final diff.
 
 ## Validation
+<!-- Record commands/checks actually performed. -->
 
-None
+- Not started.
 
 ## Status
-
-Idle
+**Not started**

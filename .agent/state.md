@@ -1,36 +1,42 @@
-# Current Project State
+# Project State
 
-Keep this document concise. It describes the current state, not historical activity.
+## Current Status
+<!-- One or two sentences describing where the project currently stands. -->
 
-## Status
-
-Template initialized.
-
-## Current Focus
-
-Project definition.
+Not started.
 
 ## Completed
+<!-- Important capabilities or milestones that are actually complete. -->
 
-- Agent instruction structure
-- Project documentation structure
+- None.
 
 ## In Progress
+<!-- Work currently underway across the project. -->
 
-- None
-
-## Blocked
-
-- None
+- None.
 
 ## Known Issues
+<!-- Known bugs, limitations, blockers, or technical debt. -->
 
-- None
+- None.
 
-## Next Recommended Work
+## Technical State
+<!-- Important implementation facts that agents should know across tasks. -->
 
-Define the initial project requirements.
+- None.
+
+## Recent Decisions
+<!-- Only decisions that materially affect future implementation. -->
+<!-- Detailed rationale belongs in docs/decisions.md. -->
+
+- None.
+
+## Next Priorities
+<!-- The most important upcoming work, in priority order. -->
+
+1. None.
 
 ## Last Updated
+<!-- YYYY-MM-DD -->
 
-2026-09-13
+YYYY-MM-DD
