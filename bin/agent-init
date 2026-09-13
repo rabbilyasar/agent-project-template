@@ -17,8 +17,12 @@ fi
 
 mkdir -p "$project_dir"
 
-script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-template_root="$(cd -- "$script_dir/.." && pwd)"
+template_root="${AGENT_INIT_TEMPLATE_DIR:-$HOME/.local/share/agent-init}"
+
+if [[ ! -d "$template_root" ]]; then
+    printf 'Error: template directory not found: %s\n' "$template_root" >&2
+    exit 1
+fi
 
 files=(
     "AGENTS.md"
@@ -38,6 +42,11 @@ skipped=0
 for file in "${files[@]}"; do
     source="$template_root/$file"
     destination="$project_dir/$file"
+
+    if [[ ! -f "$source" ]]; then
+        printf 'Error: template file not found: %s\n' "$source" >&2
+        exit 1
+    fi
 
     if [[ -e "$destination" ]]; then
         printf 'SKIP     %s\n' "$file"
