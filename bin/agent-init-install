@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+repo_root="$(cd -- "$script_dir/.." && pwd)"
+
+install_dir="$HOME/.local/bin"
+template_dir="$HOME/.local/share/agent-init"
+
+files=(
+    "AGENTS.md"
+    ".agent/current-task.md"
+    ".agent/roadmap.md"
+    ".agent/state.md"
+    "docs/requirements.md"
+    "docs/architecture.md"
+    "docs/decisions.md"
+    "docs/development.md"
+    "docs/troubleshooting.md"
+)
+
+usage() {
+    printf 'Usage: %s [--help|-h]\n' "$(basename "$0")"
+}
+
+if [[ $# -eq 1 && ( "$1" == "--help" || "$1" == "-h" ) ]]; then
+    usage
+    exit 0
+fi
+
+if [[ $# -ne 0 ]]; then
+    usage >&2
+    exit 2
+fi
+
+for file in "${files[@]}"; do
+    if [[ ! -f "$repo_root/$file" ]]; then
+        printf 'Error: template file not found: %s\n' "$repo_root/$file" >&2
+        exit 1
+    fi
+done
+
+if [[ ! -f "$repo_root/bin/agent-init" ]]; then
+    printf 'Error: initializer not found: %s\n' "$repo_root/bin/agent-init" >&2
+    exit 1
+fi
+
+mkdir -p "$install_dir" "$template_dir"
+
+install -m 755 "$repo_root/bin/agent-init" "$install_dir/agent-init"
+
+for file in "${files[@]}"; do
+    destination="$template_dir/$file"
+    mkdir -p "$(dirname -- "$destination")"
+    install -m 644 "$repo_root/$file" "$destination"
+done
+
+printf 'Installed agent-init to: %s\n' "$install_dir/agent-init"
+printf 'Installed templates to: %s\n' "$template_dir"
+printf 'Templates installed: %d\n' "${#files[@]}"

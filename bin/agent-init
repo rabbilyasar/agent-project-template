@@ -2,11 +2,24 @@
 set -euo pipefail
 
 usage() {
-    printf 'Usage: %s <project-directory>\n' "$(basename "$0")" >&2
+    printf 'Usage: %s <project-directory>\n' "$(basename "$0")"
+}
+
+if [[ $# -eq 1 && ( "$1" == "--help" || "$1" == "-h" ) ]]; then
+    usage
+    exit 0
+fi
+
+[[ $# -eq 1 ]] || {
+    usage >&2
     exit 2
 }
 
-[[ $# -eq 1 ]] || usage
+if [[ "$1" == -* ]]; then
+    printf 'Error: unknown option: %s\n' "$1" >&2
+    usage >&2
+    exit 2
+fi
 
 project_dir=$1
 
