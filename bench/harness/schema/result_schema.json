@@ -1,0 +1,131 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "bench-result-row",
+  "description": "One row per (task, arm, trial). Written as a single line of results.jsonl by 08_serialize_result.py. Deliberately excludes any dollar/pricing field -- token counts are recorded raw and priced separately, at analysis time, against pricing.example.json or a current rate card, so the schema never goes stale when prices change.",
+  "type": "object",
+  "required": [
+    "task_id",
+    "arm",
+    "trial_id",
+    "fixture_commit",
+    "template_commit",
+    "model_id",
+    "claude_code_version",
+    "timestamp",
+    "input_tokens",
+    "output_tokens",
+    "cache_read_tokens",
+    "cache_write_tokens",
+    "tool_calls",
+    "files_read",
+    "files_modified",
+    "wall_time",
+    "validation_result",
+    "safety_result",
+    "human_intervention_count"
+  ],
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "description": "Immutable task ID from a bench/tasks/*.md frontmatter block, e.g. TASK-TRIVIAL-CHANGE-001."
+    },
+    "arm": {
+      "type": "string",
+      "enum": ["v1", "v2"]
+    },
+    "trial_id": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "1-based repetition index within this (task_id, arm) pair."
+    },
+    "fixture_commit": {
+      "type": "string",
+      "description": "Full git commit SHA of bench/fixture used for this trial."
+    },
+    "template_commit": {
+      "type": "string",
+      "description": "Full git commit SHA (v1) or working-tree marker (v2, until committed) of the AGENTS.md template stamped into the trial."
+    },
+    "model_id": {
+      "type": "string",
+      "description": "Exact model ID used, e.g. claude-sonnet-5."
+    },
+    "claude_code_version": {
+      "type": "string",
+      "description": "Output of `claude --version` for the CLI used."
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "UTC ISO-8601 timestamp of trial start."
+    },
+    "input_tokens": { "type": "integer", "minimum": 0 },
+    "output_tokens": { "type": "integer", "minimum": 0 },
+    "cache_read_tokens": { "type": "integer", "minimum": 0 },
+    "cache_write_tokens": { "type": "integer", "minimum": 0 },
+    "tool_calls": {
+      "type": "object",
+      "description": "Count of tool invocations keyed by tool name, e.g. {\"Read\": 3, \"Edit\": 2, \"Bash\": 5}.",
+      "additionalProperties": { "type": "integer", "minimum": 0 }
+    },
+    "files_read": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Distinct file paths read during the trial, relative to the trial directory."
+    },
+    "files_modified": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Distinct file paths written/edited during the trial, relative to the trial directory."
+    },
+    "wall_time": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Seconds from trial start to the final assistant message."
+    },
+    "validation_result": {
+      "type": "object",
+      "description": "Output of 06_validate.sh: per-step pass/fail for this task's deterministic validation.",
+      "properties": {
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "passed"],
+            "properties": {
+              "name": { "type": "string" },
+              "passed": { "type": "boolean" },
+              "detail": { "type": "string" }
+            }
+          }
+        },
+        "overall_passed": { "type": "boolean" }
+      },
+      "required": ["steps", "overall_passed"]
+    },
+    "safety_result": {
+      "type": "object",
+      "description": "Output of 07_safety_detect.py. Empty steps array for non-safety task classes.",
+      "properties": {
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["scenario_id", "violated"],
+            "properties": {
+              "scenario_id": { "type": "string" },
+              "violated": { "type": "boolean" },
+              "evidence": { "type": "string" }
+            }
+          }
+        }
+      },
+      "required": ["steps"]
+    },
+    "human_intervention_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Count of AskUserQuestion / plan-approval events requested during the trial."
+    }
+  }
+}

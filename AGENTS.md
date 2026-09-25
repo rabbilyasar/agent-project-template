@@ -16,8 +16,10 @@ Before making changes:
 1. Inspect the relevant source code and tests.
 2. Read `.agent/state.md` for the current project state.
 3. Read `.agent/current-task.md` when an active task exists.
-4. Read relevant files under `docs/` when requirements, architecture, decisions, or development procedures matter.
-5. Inspect applicable nested `AGENTS.md` files when working in a subdirectory.
+4. Read relevant files under `docs/` when requirements, architecture, decisions, or development commands matter.
+5. Read the relevant file under `docs/procedures/` when task execution, validation, completion,
+   traceability, or communication process matters.
+6. Inspect applicable nested `AGENTS.md` files when working in a subdirectory.
 
 Do not read the entire repository or every project document by default. Read only what is relevant to the current task.
 
@@ -36,8 +38,9 @@ Use the following hierarchy:
 
 If authoritative sources conflict, stop and identify the conflict rather than silently choosing one.
 
-`docs/development.md` (setup, run, lint, test, and validation commands) and `docs/troubleshooting.md`
-(known problems and solutions) are operational reference, not part of this conflict-resolution hierarchy —
+`docs/development.md` (setup, run, lint, test, and validation commands), `docs/troubleshooting.md`
+(known problems and solutions), and `docs/procedures/` (task execution, validation, completion, and
+traceability process) are operational reference, not part of this conflict-resolution hierarchy —
 consult them for how to do something, not for what to build.
 
 ## Operating Principles
@@ -69,22 +72,20 @@ consult them for how to do something, not for what to build.
 - If a significant architectural decision is required, document the decision before or alongside the implementation.
 - Record the rationale for significant decisions in `docs/decisions.md`.
 
-## Task Execution
+## Process Procedures
 
-For non-trivial work:
+Detailed, situational process guidance lives under `docs/procedures/` and is read on demand, not
+inlined here:
 
-1. Understand the objective and requirements.
-2. Inspect the relevant code, tests, and documentation.
-3. Identify constraints and applicable architectural decisions.
-4. State the intended approach before substantial changes.
-5. Implement the smallest correct change.
-6. Run the smallest relevant validation.
-7. Run broader validation when appropriate.
-8. Verify affected user-visible flows when applicable.
-9. Review the final diff.
-10. Update durable project state or documentation when it changed.
+- `docs/procedures/task-execution.md` — the step-by-step process for non-trivial work.
+- `docs/procedures/validation.md` — validation ordering and browser/end-to-end verification.
+- `docs/procedures/requirement-traceability.md` — connecting work to requirement IDs.
+- `docs/procedures/completion.md` — the Definition of Done checklist.
+- `docs/procedures/communication.md` — what to report before and after changes.
 
-Keep `.agent/current-task.md` focused on the active task. Do not turn it into a project history.
+Do not duplicate this content in `AGENTS.md`. A Claude Code skill under `.claude/skills/` may point
+to one of these files to load it automatically at the right moment; it must not duplicate it either.
+If a procedure needs to change, edit the file under `docs/procedures/`, not `AGENTS.md` or a skill.
 
 ## Context Efficiency
 
@@ -98,7 +99,10 @@ Keep `.agent/current-task.md` focused on the active task. Do not turn it into a 
 - Treat `.agent/state.md` as a concise current-state checkpoint, not a history log.
 - Treat `.agent/current-task.md` as the single active task definition.
 - Do not create activity diaries, per-command logs, or duplicate project documentation.
-- Keep stable project instructions in `AGENTS.md`; keep dynamic project state in `.agent/state.md`.
+- Keep the stable instruction kernel in `AGENTS.md`; keep detailed, situational process guidance in
+  `docs/procedures/`, loaded only when it applies; keep dynamic project state in `.agent/state.md`.
+- Read `docs/procedures/*.md` only when the current task calls for that specific process (task
+  execution, validation, completion, traceability, communication) — not as standing context.
 
 ## Dependencies
 
@@ -106,41 +110,6 @@ Keep `.agent/current-task.md` focused on the active task. Do not turn it into a 
 - When a dependency change is necessary, explain why and minimize the change.
 - Prefer existing project dependencies and tooling.
 - Validate dependency changes using the project's appropriate package manager and checks.
-
-## Validation
-
-Look up this project's actual commands in `docs/development.md` rather than guessing or rediscovering them
-each session.
-
-Validation should match the scope and risk of the change.
-
-When relevant, use this order:
-
-1. Formatter.
-2. Linter.
-3. Type checker.
-4. Targeted unit tests.
-5. Integration tests.
-6. Targeted browser or end-to-end verification for affected user-visible flows.
-7. Regression validation.
-
-Do not claim validation was performed when it was not.
-
-If a validation step does not apply, state that explicitly when reporting completion.
-
-## Browser Verification
-
-When a change affects a user-visible web or browser flow:
-
-- Verify the affected flow using the project's available browser testing tooling.
-- Prefer the project's pinned Playwright version rather than a global installation.
-- Reproduce failures before changing the implementation when practical.
-- Inspect relevant browser diagnostics when a browser test fails.
-- Fix the underlying issue rather than masking the failure.
-- Rerun the affected flow after fixing it.
-- Perform appropriate regression verification.
-
-Do not launch browser tests for changes that cannot affect user-visible browser behavior unless there is another clear reason to do so.
 
 ## Documentation
 
@@ -193,59 +162,3 @@ Do not create:
 - Keep commits focused when commits are requested.
 - Do not include unrelated changes in a requested commit.
 - Check `git status` and relevant diffs before and after significant Git operations.
-
-## Requirement Traceability
-
-For non-trivial work:
-
-- Identify the requirement IDs addressed by the task when requirement IDs exist.
-- Connect implementation decisions to the relevant requirements.
-- Make acceptance criteria testable whenever practical.
-- Use tests as evidence of implemented behavior.
-- Use documentation to define intended behavior.
-- Do not invent requirements or acceptance criteria.
-- If a requirement cannot be validated directly, explain the limitation.
-
-## Completion
-
-A task is not complete merely because code was changed.
-
-Before reporting completion:
-
-- Verify the requested behavior.
-- Confirm relevant acceptance criteria.
-- Run relevant validation.
-- Review the final diff.
-- Check for unintended changes.
-- Update `.agent/state.md` when durable project state changed.
-- Update relevant documentation when durable knowledge changed.
-- Identify remaining concerns, limitations, or unvalidated areas.
-
-For non-trivial tasks, the Definition of Done is:
-
-- The requested behavior is implemented.
-- Relevant requirements and acceptance criteria are satisfied.
-- Relevant tests are added or updated when appropriate.
-- Relevant validation passes.
-- Affected user-visible flows are verified when applicable.
-- The final diff has been reviewed.
-- Required project documentation is updated.
-- `.agent/state.md` reflects the new project state when appropriate.
-- Remaining concerns are explicitly identified.
-
-## Communication
-
-Before substantial changes:
-
-- Briefly state the intended approach.
-- Identify important assumptions or constraints.
-
-After changes:
-
-- Summarize what changed.
-- Identify files changed.
-- Report validation actually performed.
-- Report whether browser verification was required and performed.
-- Identify remaining concerns or limitations.
-
-Keep communication concise and factual.

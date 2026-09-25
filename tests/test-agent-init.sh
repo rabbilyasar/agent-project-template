@@ -72,6 +72,11 @@ for f in AGENTS.md CLAUDE.md README.md .agent/current-task.md .agent/state.md .a
          docs/requirements.md docs/architecture.md docs/decisions.md docs/development.md docs/troubleshooting.md; do
     assert_file "template installs $f" "$template_dir/$f"
 done
+for f in .claude/skills/task-execution/SKILL.md .claude/skills/validation/SKILL.md \
+         .claude/skills/requirement-traceability/SKILL.md .claude/skills/completion/SKILL.md \
+         .claude/skills/communication/SKILL.md; do
+    assert_file "template installs $f" "$template_dir/$f"
+done
 
 echo "== agent-init-install: refresh on re-run =="
 refresh_repo="$work/refresh-repo"
@@ -84,6 +89,7 @@ cp "$repo_root/CLAUDE.md" "$refresh_repo/CLAUDE.md"
 cp "$repo_root/PROJECT_README.md" "$refresh_repo/PROJECT_README.md"
 cp -r "$repo_root/.agent" "$refresh_repo/.agent"
 cp -r "$repo_root/docs" "$refresh_repo/docs"
+cp -r "$repo_root/.claude" "$refresh_repo/.claude"
 
 refresh_home="$work/refresh-home"
 mkdir -p "$refresh_home"
@@ -178,6 +184,11 @@ for f in AGENTS.md CLAUDE.md README.md .agent/current-task.md .agent/state.md .a
          docs/requirements.md docs/architecture.md docs/decisions.md docs/development.md docs/troubleshooting.md; do
     assert_file "generates $f" "$proj/$f"
 done
+for f in .claude/skills/task-execution/SKILL.md .claude/skills/validation/SKILL.md \
+         .claude/skills/requirement-traceability/SKILL.md .claude/skills/completion/SKILL.md \
+         .claude/skills/communication/SKILL.md; do
+    assert_file "generates $f" "$proj/$f"
+done
 
 assert_contains "CLAUDE.md imports AGENTS.md" "@AGENTS.md" "$proj/CLAUDE.md"
 assert_contains "state.md substitutes today's date" "$today" "$proj/.agent/state.md"
@@ -203,11 +214,14 @@ fi
 
 echo "== agent-init: partial project (some files already present) =="
 partial="$work/partial-project"
-mkdir -p "$partial"
+mkdir -p "$partial/.claude/skills/task-execution"
 printf 'custom content\n' > "$partial/AGENTS.md"
-assert_success "init tolerates a pre-existing file" env AGENT_INIT_TEMPLATE_DIR="$template_dir" "$repo_root/bin/agent-init" "$partial"
+printf 'custom skill content\n' > "$partial/.claude/skills/task-execution/SKILL.md"
+assert_success "init tolerates pre-existing files" env AGENT_INIT_TEMPLATE_DIR="$template_dir" "$repo_root/bin/agent-init" "$partial"
 assert_contains "pre-existing file is not overwritten" "custom content" "$partial/AGENTS.md"
+assert_contains "pre-existing skill file is not overwritten" "custom skill content" "$partial/.claude/skills/task-execution/SKILL.md"
 assert_file "missing files are still filled in" "$partial/docs/requirements.md"
+assert_file "missing skill files are still filled in" "$partial/.claude/skills/validation/SKILL.md"
 
 echo "== agent-init: invalid arguments =="
 assert_exit_code "no arguments -> exit 2"        2 "$repo_root/bin/agent-init"

@@ -6,8 +6,8 @@ concise durable project state, durable project knowledge (requirements, architec
 development commands, troubleshooting), and a small CLI tool that stamps all of it into a project
 directory without cloning this repository.
 
-This repository is itself a valid instance of the template: `AGENTS.md`, `CLAUDE.md`, `.agent/`, and
-`docs/` at the root are the canonical source the tool installs and copies from.
+This repository is itself a valid instance of the template: `AGENTS.md`, `CLAUDE.md`, `.agent/`,
+`docs/`, and `.claude/` at the root are the canonical source the tool installs and copies from.
 
 ## Design Principles
 
@@ -51,6 +51,9 @@ This creates the directory if it doesn't exist and copies the template into it:
 - `.agent/current-task.md`, `.agent/state.md`, `.agent/roadmap.md` — task, state, and roadmap tracking.
 - `docs/requirements.md`, `docs/architecture.md`, `docs/decisions.md`, `docs/development.md`,
   `docs/troubleshooting.md` — durable project knowledge.
+- `docs/procedures/` — on-demand process guidance (task execution, validation, completion,
+  requirement traceability, communication).
+- `.claude/skills/` — thin Claude Code skills that load the matching `docs/procedures/*.md` file.
 
 `agent-init` never overwrites an existing file — it prints `SKIP` and leaves it alone. That makes it safe
 to run against a project that already has some of these files in place, and safe to re-run after an
@@ -71,13 +74,13 @@ actual project state.
 ## Updating the Template
 
 Edit the files at the root of this repository (`AGENTS.md`, `CLAUDE.md`, `.agent/`, `docs/`,
-`PROJECT_README.md`), then run `bin/agent-init-install` again to refresh the installed copy. Projects
-that were already initialized are unaffected — copy over specific updated files by hand if you want an
-existing project to pick up a template change.
+`.claude/`, `PROJECT_README.md`), then run `bin/agent-init-install` again to refresh the installed
+copy. Projects that were already initialized are unaffected — copy over specific updated files by
+hand if you want an existing project to pick up a template change.
 
 ## Repository Layout
 
-- `AGENTS.md`, `CLAUDE.md`, `.agent/`, `docs/`, `PROJECT_README.md` — the template content itself.
+- `AGENTS.md`, `CLAUDE.md`, `.agent/`, `docs/`, `.claude/`, `PROJECT_README.md` — the template content itself.
 - `bin/agent-init` — the initializer.
 - `bin/agent-init-install` — installs the initializer and template for local use.
 - `tests/test-agent-init.sh` — smoke tests for both.

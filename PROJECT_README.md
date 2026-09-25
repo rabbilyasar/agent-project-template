@@ -39,6 +39,7 @@ This project uses the following workflow:
 - `.agent/current-task.md` — Active task definition
 - `.agent/state.md` — Current durable project state
 - `.agent/roadmap.md` — Project milestones and priorities
+- `.claude/skills/` — Claude Code skills that load the matching `docs/procedures/*.md` file on demand
 
 ## Documentation
 
@@ -47,6 +48,8 @@ This project uses the following workflow:
 - `docs/decisions.md` — Architectural and technical decisions
 - `docs/development.md` — Setup, run, lint, test, and validation commands for this project
 - `docs/troubleshooting.md` — Known problems and solutions
+- `docs/procedures/` — Process guidance loaded on demand (task execution, validation, completion,
+  requirement traceability, communication)
 
 ## Development
 

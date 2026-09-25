@@ -9,14 +9,15 @@ template_dir="$HOME/.local/share/agent-init"
 
 # "<source relative to repo root>:<destination relative to template dir>"
 # A directory entry is mirrored recursively, so new files added under
-# .agent/ or docs/ in this repo are picked up automatically -- nothing here
-# needs to change when the template's contents grow.
+# .agent/, docs/, or .claude/ in this repo are picked up automatically --
+# nothing here needs to change when the template's contents grow.
 manifest=(
     "AGENTS.md:AGENTS.md"
     "CLAUDE.md:CLAUDE.md"
     "PROJECT_README.md:README.md"
     ".agent:.agent"
     "docs:docs"
+    ".claude:.claude"
 )
 
 usage() {

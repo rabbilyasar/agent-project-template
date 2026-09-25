@@ -1,0 +1,9 @@
+{
+  "_comment": "Not consumed by the harness. An example of the shape an analysis step supplies separately when turning raw token counts in results.jsonl into a dollar figure. Never hardcode prices into the harness or the schema -- rates change and differ per model.",
+  "model_id": "claude-sonnet-5",
+  "as_of": "REPLACE-WITH-DATE-RATES-WERE-LOOKED-UP",
+  "usd_per_million_input_tokens": null,
+  "usd_per_million_output_tokens": null,
+  "usd_per_million_cache_read_tokens": null,
+  "usd_per_million_cache_write_tokens": null
+}
