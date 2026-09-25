@@ -18,7 +18,7 @@ Before making changes:
 3. Read `.agent/current-task.md` when an active task exists.
 4. Read relevant files under `docs/` when requirements, architecture, decisions, or development commands matter.
 5. Read the relevant file under `docs/procedures/` when task execution, validation, completion,
-   traceability, or communication process matters.
+   traceability, debugging, or communication process matters.
 6. Inspect applicable nested `AGENTS.md` files when working in a subdirectory.
 
 Do not read the entire repository or every project document by default. Read only what is relevant to the current task.
@@ -39,9 +39,9 @@ Use the following hierarchy:
 If authoritative sources conflict, stop and identify the conflict rather than silently choosing one.
 
 `docs/development.md` (setup, run, lint, test, and validation commands), `docs/troubleshooting.md`
-(known problems and solutions), and `docs/procedures/` (task execution, validation, completion, and
-traceability process) are operational reference, not part of this conflict-resolution hierarchy —
-consult them for how to do something, not for what to build.
+(known problems and solutions), and `docs/procedures/` (task execution, validation, completion,
+traceability, and debugging process) are operational reference, not part of this conflict-resolution
+hierarchy — consult them for how to do something, not for what to build.
 
 ## Operating Principles
 
@@ -81,6 +81,7 @@ inlined here:
 - `docs/procedures/validation.md` — validation ordering and browser/end-to-end verification.
 - `docs/procedures/requirement-traceability.md` — connecting work to requirement IDs.
 - `docs/procedures/completion.md` — the Definition of Done checklist.
+- `docs/procedures/debugging.md` — the reproduce, isolate, root-cause, fix, and verify lifecycle.
 - `docs/procedures/communication.md` — what to report before and after changes.
 
 Do not duplicate this content in `AGENTS.md`. A Claude Code skill under `.claude/skills/` may point
@@ -102,7 +103,8 @@ If a procedure needs to change, edit the file under `docs/procedures/`, not `AGE
 - Keep the stable instruction kernel in `AGENTS.md`; keep detailed, situational process guidance in
   `docs/procedures/`, loaded only when it applies; keep dynamic project state in `.agent/state.md`.
 - Read `docs/procedures/*.md` only when the current task calls for that specific process (task
-  execution, validation, completion, traceability, communication) — not as standing context.
+  execution, validation, completion, traceability, debugging, communication) — not as standing
+  context.
 
 ## Dependencies
 

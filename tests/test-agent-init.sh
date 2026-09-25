@@ -74,7 +74,7 @@ for f in AGENTS.md CLAUDE.md README.md .agent/current-task.md .agent/state.md .a
 done
 for f in .claude/skills/task-execution/SKILL.md .claude/skills/validation/SKILL.md \
          .claude/skills/requirement-traceability/SKILL.md .claude/skills/completion/SKILL.md \
-         .claude/skills/communication/SKILL.md; do
+         .claude/skills/debugging/SKILL.md .claude/skills/communication/SKILL.md; do
     assert_file "template installs $f" "$template_dir/$f"
 done
 
@@ -186,7 +186,7 @@ for f in AGENTS.md CLAUDE.md README.md .agent/current-task.md .agent/state.md .a
 done
 for f in .claude/skills/task-execution/SKILL.md .claude/skills/validation/SKILL.md \
          .claude/skills/requirement-traceability/SKILL.md .claude/skills/completion/SKILL.md \
-         .claude/skills/communication/SKILL.md; do
+         .claude/skills/debugging/SKILL.md .claude/skills/communication/SKILL.md; do
     assert_file "generates $f" "$proj/$f"
 done
 
