@@ -16,6 +16,10 @@ turn this into an approval gate for every individual action.
 Inspect the relevant code, tests, and documentation before proposing anything. Do not modify files
 during investigation. Establish the actual problem or request and the constraints that apply.
 
+Check early for pre-existing uncommitted changes. Never modify or revert them, and track your own
+edits precisely enough to distinguish them from existing work — a plain diff cannot separate the
+two once both are present in the same working tree.
+
 ## 2. Propose
 
 State a narrow plan: what will change, and just as importantly, what will not. Do not begin

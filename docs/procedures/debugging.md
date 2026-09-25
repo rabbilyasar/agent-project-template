@@ -23,7 +23,9 @@ situation, use it instead of duplicating it here — this procedure is the vendo
    responsible.
 5. **Identify root cause** — State the root cause explicitly before finalizing a fix. Do not patch
    a symptom merely because the failure happens to surface at a particular call site; find the
-   actual defect.
+   actual defect. Before declaring behavior a defect, check relevant project specifications,
+   decisions, and documented limitations for an intentional rationale — a documented limitation is
+   not the same as an oversight.
 6. **Add or update a regression test** — When the defect is reasonably testable, add or update a
    test that fails before the fix and passes after it.
 7. **Make the smallest appropriate fix** — Fix the identified root cause with the smallest change
