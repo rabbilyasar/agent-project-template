@@ -77,7 +77,7 @@ consult them for how to do something, not for what to build.
 Detailed, situational process guidance lives under `docs/procedures/` and is read on demand, not
 inlined here:
 
-- `docs/procedures/task-execution.md` — the step-by-step process for non-trivial work.
+- `docs/procedures/task-execution.md` — the staged investigate/propose/approve/implement/verify/accept process for non-trivial work.
 - `docs/procedures/validation.md` — validation ordering and browser/end-to-end verification.
 - `docs/procedures/requirement-traceability.md` — connecting work to requirement IDs.
 - `docs/procedures/completion.md` — the Definition of Done checklist.
