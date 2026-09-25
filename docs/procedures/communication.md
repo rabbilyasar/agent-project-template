@@ -12,8 +12,8 @@ After changes:
 
 - Summarize what changed.
 - Identify files changed.
-- Report validation actually performed.
-- Report whether browser verification was required and performed.
+- Report the applicable verification tiers (automated, agent, human acceptance) and their status,
+  marking any tier that does not apply as N/A — see `docs/procedures/completion.md`.
 - Identify remaining concerns or limitations.
 
 Keep communication concise and factual.

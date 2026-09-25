@@ -40,9 +40,13 @@ success without evidence.
 
 ## 6. Stop for human acceptance
 
-State plainly that implementation and verification are complete, and stop there. Do not commit and
-do not start another task automatically. This project has no separate stop-token convention beyond
-stating completion clearly — do not invent one.
+State plainly that implementation and verification are complete, reporting the verification status
+(see `docs/procedures/completion.md`), and stop there. Do not commit and do not start another task
+automatically. This project has no separate stop-token convention beyond stating completion clearly
+— do not invent one.
+
+If the user does not accept the work, treat that as new input, not a failed verification: return to
+step 2 (Propose) with the rejection as context, rather than starting over from scratch.
 
 ## 7. Commit only after a separate, explicit commit request
 

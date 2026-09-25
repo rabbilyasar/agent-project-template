@@ -1,6 +1,6 @@
 ---
 name: validation
-description: Use when deciding what to validate and in what order after a change, including browser or end-to-end verification for user-visible web flows.
+description: Use when deciding what verification evidence to gather after a change - deterministic checks and agent-gathered evidence (including browser/end-to-end flows for user-visible web flows), in order.
 ---
 
 Read `docs/procedures/validation.md` and follow it.

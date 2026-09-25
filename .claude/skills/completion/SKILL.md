@@ -1,6 +1,6 @@
 ---
 name: completion
-description: Use before reporting non-trivial work as complete - defines the Definition of Done checklist and what to verify first.
+description: Use before reporting non-trivial work as complete - defines the Definition of Done checklist and the three-tier verification model (automated, agent, human acceptance), including the standard status block to report.
 ---
 
 Read `docs/procedures/completion.md` and follow it.
