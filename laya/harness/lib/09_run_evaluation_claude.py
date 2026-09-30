@@ -19,13 +19,21 @@ Requires ANTHROPIC_API_KEY and ANTHROPIC_WORKSPACE_ID in this process's own envi
 (read once, at call time, inside the injected transport function -- never printed, never
 written to any file).
 
+Phase 4.6: rows with inclusion_status=exclude are never sent to Claude (their IDs are
+listed in the manifest), and the run aborts before any request unless the planned call set
+is exactly EXPECTED_CLAUDE_CALLS rows and the evaluation inputs are committed. The manifest
+records the harness commit and the SHA-256 of every prompt contract. `--plan-only` runs the
+preflight and prints the planned calls without making any request.
+
 Never writes into laya/corpus/. Writes run manifest + predictions + per-decision-type
 aggregate reports under laya/results/<run_id>/.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import os
+import subprocess
 import sys
 import urllib.error
 import urllib.request
@@ -35,6 +43,7 @@ from pathlib import Path
 LIB_DIR = Path(__file__).resolve().parent
 PROMPTS_DIR = LIB_DIR.parents[0] / "prompts"
 RESULTS_DIR = LIB_DIR.parents[1] / "results"
+REPO_DIR = LIB_DIR.parents[2]
 
 sys.path.insert(0, str(LIB_DIR))
 from _module_loader import load_lib_module  # noqa: E402
@@ -52,6 +61,10 @@ DP22_TYPE = "agent_verification_applicable"
 NON_DP22_TYPES = ["trivial_vs_staged", "documented_limitation_vs_defect", "human_acceptance_required"]
 EXPECTED_CORPUS_HASH = "a3a5102aee5a948fed6aee86c3cd3c8a6c392bf70f7b5d34ab3795073a2c1a2b"
 EXPECTED_DP22_SYSTEM1_IDS = {"ZEUS-DP22-02", "ZEUS-DP22-03"}
+# Phase 4.6: excluded corpus rows are never sent to Claude (they are never scored either).
+EXPECTED_SKIPPED_EXCLUDED_IDS = {"AGENT-DP11-01", "JOSS-DP11-01", "ZEUS-DP16-02"}
+EXPECTED_CLAUDE_CALLS = 26
+PROVENANCE_PATHS = ["laya/harness", "laya/corpus", "laya/schema", "laya/validate_corpus.py"]
 
 CLAUDE_MODEL = claude_adapter.DEFAULT_MODEL
 CLAUDE_MAX_TOKENS = claude_adapter.DEFAULT_MAX_TOKENS
@@ -99,6 +112,20 @@ def _real_transport(request_body: dict) -> dict:
     return parsed
 
 
+def _provenance() -> dict:
+    """Git commit + clean/dirty state of the evaluation inputs, and a hash of each prompt
+    contract (the contracts carry no version field of their own)."""
+    def git(*args: str) -> str:
+        return subprocess.run(["git", "-C", str(REPO_DIR), *args], capture_output=True, text=True, check=True).stdout.strip()
+    return {
+        "harness_git_commit": git("rev-parse", "HEAD"),
+        "harness_uncommitted_changes": bool(git("status", "--porcelain", "--", *PROVENANCE_PATHS)),
+        "prompt_contract_sha256": {
+            p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(PROMPTS_DIR.glob("*.json"))
+        },
+    }
+
+
 def preflight() -> dict:
     """All checks required before any real request: corpus hash, model identifier,
     configuration, decision counts, deterministic-prefilter status, credential presence
@@ -130,6 +157,23 @@ def preflight() -> dict:
     if dp22_system1_ids != EXPECTED_DP22_SYSTEM1_IDS:
         raise SystemExit(f"ABORT: DP-22 System-1 row set mismatch. expected={EXPECTED_DP22_SYSTEM1_IDS} actual={dp22_system1_ids}")
 
+    planned_ids = sorted(dp22_system1_ids) + [
+        r.candidate_id for r in rows
+        if r.decision_type in NON_DP22_TYPES and r.raw["inclusion_status"] != "exclude"
+    ]
+    skipped_excluded_ids = sorted(
+        r.candidate_id for r in rows
+        if r.decision_type in NON_DP22_TYPES and r.raw["inclusion_status"] == "exclude"
+    )
+    if set(skipped_excluded_ids) != EXPECTED_SKIPPED_EXCLUDED_IDS:
+        raise SystemExit(f"ABORT: skipped excluded row set mismatch. expected={sorted(EXPECTED_SKIPPED_EXCLUDED_IDS)} actual={skipped_excluded_ids}")
+    if len(planned_ids) != EXPECTED_CLAUDE_CALLS or len(set(planned_ids)) != len(planned_ids):
+        raise SystemExit(f"ABORT: expected {EXPECTED_CLAUDE_CALLS} distinct Claude calls, planned {len(planned_ids)}")
+
+    provenance = _provenance()
+    if provenance["harness_uncommitted_changes"]:
+        raise SystemExit(f"ABORT: uncommitted changes under {PROVENANCE_PATHS}; commit before a paid run")
+
     model_identifier = claude_adapter.build_model_identifier(CLAUDE_MODEL)
     if model_identifier != "claude:claude-haiku-4-5-20251001:direct-api":
         raise SystemExit(f"ABORT: model_identifier does not match the required literal: {model_identifier!r}")
@@ -146,6 +190,10 @@ def preflight() -> dict:
         "model_identifier": model_identifier,
         "model_configuration": {"model": CLAUDE_MODEL, "max_tokens": CLAUDE_MAX_TOKENS, "anthropic_version": ANTHROPIC_VERSION},
         "dp22_system1_row_ids": sorted(dp22_system1_ids),
+        "planned_claude_call_count": len(planned_ids),
+        "planned_claude_candidate_ids": planned_ids,
+        "skipped_excluded_candidate_ids": skipped_excluded_ids,
+        **provenance,
         "deterministic_prefilter_rule_version": prefilter_mod.RULE_VERSION,
         "api_credential_present": True,
         "workspace_id_present": True,
@@ -156,9 +204,11 @@ def preflight() -> dict:
     return report
 
 
-def run() -> dict:
+def run(plan_only: bool = False) -> dict:
     pf = preflight()
-    run_id = f"phase4-claude-{CLAUDE_MODEL}-real-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}"
+    if plan_only:
+        return {"preflight": pf}
+    run_id = f"phase4.6-claude-{CLAUDE_MODEL}-real-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}"
     corpus_hash = pf["corpus_content_hash"]
     model_identifier = pf["model_identifier"]
 
@@ -186,6 +236,11 @@ def run() -> dict:
         "max_tokens": CLAUDE_MAX_TOKENS,
         "anthropic_version": ANTHROPIC_VERSION,
         "model_identifier": model_identifier,
+        "harness_git_commit": pf["harness_git_commit"],
+        "harness_uncommitted_changes": pf["harness_uncommitted_changes"],
+        "prompt_contract_sha256": pf["prompt_contract_sha256"],
+        "planned_claude_call_count": pf["planned_claude_call_count"],
+        "skipped_excluded_candidate_ids": pf["skipped_excluded_candidate_ids"],
         "started_at": datetime.now(timezone.utc).isoformat(),
     }
 
@@ -222,16 +277,24 @@ def run() -> dict:
             print(f"  {row.candidate_id}: {status}")
         return results
 
+    to_call_ids = [r.candidate_id for r in dp22_claude_rows] + [
+        r.candidate_id for r in rows
+        if r.decision_type in NON_DP22_TYPES and r.raw["inclusion_status"] != "exclude"
+    ]
+    if sorted(to_call_ids) != sorted(pf["planned_claude_candidate_ids"]):
+        raise SystemExit("ABORT: rows about to be sent to Claude differ from the preflight plan")
+
     print(f"=== DP-22 system1_judgment ({len(dp22_claude_rows)} rows) ===")
     all_results.extend(_run_claude_group(dp22_claude_rows, DP22_TYPE))
 
     for decision_type in NON_DP22_TYPES:
-        group_rows = [r for r in rows if r.decision_type == decision_type]
+        group_rows = [r for r in rows if r.decision_type == decision_type and r.raw["inclusion_status"] != "exclude"]
         print(f"=== {decision_type} ({len(group_rows)} rows) ===")
         all_results.extend(_run_claude_group(group_rows, decision_type))
 
-    if len(all_results) != 36:
-        raise SystemExit(f"ABORT: expected 36 canonical results, produced {len(all_results)}")
+    expected_results = len(rows) - len(pf["skipped_excluded_candidate_ids"])
+    if len(all_results) != expected_results:
+        raise SystemExit(f"ABORT: expected {expected_results} canonical results, produced {len(all_results)}")
 
     # --- serialize predictions (never into laya/corpus/) ---
     run_dir = RESULTS_DIR / run_id
@@ -299,4 +362,4 @@ def run() -> dict:
 
 
 if __name__ == "__main__":
-    run()
+    run(plan_only="--plan-only" in sys.argv[1:])
