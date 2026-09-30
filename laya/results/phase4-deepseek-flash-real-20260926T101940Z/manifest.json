@@ -1,0 +1,15 @@
+{
+  "run_id": "phase4-deepseek-flash-real-20260926T101940Z",
+  "corpus_content_hash": "a3a5102aee5a948fed6aee86c3cd3c8a6c392bf70f7b5d34ab3795073a2c1a2b",
+  "result_schema_version": "1.0",
+  "deterministic_prefilter_rule_version": "1.0",
+  "provider": "deepseek",
+  "model": "deepseek-flash",
+  "thinking": {
+    "type": "disabled"
+  },
+  "reasoning_effort": "none",
+  "model_identifier": "deepseek:deepseek-flash:thinking-disabled:effort-none",
+  "started_at": "2026-09-26T10:19:40.306731+00:00",
+  "completed_at": "2026-09-26T10:19:59.382686+00:00"
+}

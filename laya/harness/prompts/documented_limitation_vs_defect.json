@@ -1,0 +1,20 @@
+{
+  "decision_type": "documented_limitation_vs_defect",
+  "decision_question": "Given this observed behavior and the following excerpt from the project's own decision, specification, or test documentation, does the excerpt explicitly cover this behavior as intentional ('deliberate'), or is this behavior a 'defect' not covered by any stated rationale in the excerpt?",
+  "allowed_output_values": ["deliberate", "defect"],
+  "output_format": "Return exactly one of the allowed output values, optionally followed by which part of the supplied excerpt (if any) supports the answer.",
+  "evaluator_supplies": ["model_facing_input"],
+  "forbidden_information": [
+    "candidate_id", "source_project", "source_artifact",
+    "ground_truth_label", "ground_truth_evidence", "ground_truth_knowable_at",
+    "inclusion_status", "inclusion_reason", "clean_or_borderline", "confound_reason",
+    "corpus_partition", "ambiguity_tier", "evidence_polarity", "evidence_source_type",
+    "reused_evidence_of", "leakage_check", "eligible_for_binary_scoring",
+    "normative_label", "normative_basis", "empirical_label", "empirical_basis",
+    "normative_empirical_relationship",
+    "any documentation not explicitly included in the supplied excerpt -- the model must reason only from the excerpt given, not from a broader document search"
+  ],
+  "ground_truth_target_field": "ground_truth_label",
+  "scored": true,
+  "evaluation_notes": "evidence_polarity ('positive_match' vs 'absence_based') is corpus-internal only. It must never appear in the rendered prompt, and results must be reported broken out by this field (overall, positive_match, absence_based) -- never collapsed into one accuracy number, since absence_based has weaker real-evidence support. This benchmark uses only the curated excerpt already present in model_facing_input; no retrieval or document discovery is part of this evaluation."
+}

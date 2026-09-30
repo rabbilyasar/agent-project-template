@@ -1,0 +1,20 @@
+{
+  "decision_type": "human_acceptance_required",
+  "decision_question": "Given this description of a change, does the nature of the change require a human to personally inspect or use the result before it can be considered accepted (the normative policy question), or is automated/agent verification sufficient on its own without further human review?",
+  "allowed_output_values": ["required", "sufficient_without"],
+  "output_format": "Return exactly one of the allowed output values, optionally followed by a one-line rationale.",
+  "evaluator_supplies": ["model_facing_input"],
+  "forbidden_information": [
+    "candidate_id", "source_project", "source_artifact",
+    "ground_truth_label", "ground_truth_evidence", "ground_truth_knowable_at",
+    "inclusion_status", "inclusion_reason", "clean_or_borderline", "confound_reason",
+    "corpus_partition", "ambiguity_tier", "evidence_polarity", "evidence_source_type",
+    "reused_evidence_of", "leakage_check", "eligible_for_binary_scoring",
+    "normative_label", "normative_basis",
+    "empirical_label", "empirical_basis", "normative_empirical_relationship",
+    "any information about what a human actually did in response to the change"
+  ],
+  "ground_truth_target_field": "normative_label",
+  "scored": true,
+  "evaluation_notes": "Scored ONLY against normative_label -- never empirical_label. empirical_label/empirical_basis/normative_empirical_relationship exist for corpus analysis of policy-vs-behavior divergence, never as a prediction target. The corpus's normative_label values in scope for this evaluation are 'required' and 'sufficient_without' only; 'indeterminate' is a valid schema value with zero real examples and is out of scope for scoring in this evaluation."
+}

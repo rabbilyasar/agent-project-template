@@ -1,0 +1,101 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "laya-phase-4.1-decision-corpus-row",
+  "schema_version": "1.0",
+  "description": "One row per mined historical decision-point candidate for Phase 4.1 corpus design. Approved schema per the corpus-design review: distinguishes decision-time information (decision_time_context, model_facing_input) from post-decision evidence (ground_truth_evidence, and for human_acceptance_required, empirical_basis). model_facing_input must be a controlled projection of decision_time_context -- every fact in it must be traceable there. No row here has been used for any Laya/model evaluation yet; this is data-contract validation only. 'schema_version' here is this corpus content schema's own version, distinct from the JSON Schema draft named by '$schema' -- it is validated by the Phase 4.2 corpus loader and by validate_corpus.py.",
+  "type": "object",
+  "required": [
+    "candidate_id", "decision_type", "source_project", "source_artifact",
+    "decision_time_context", "model_facing_input", "ground_truth_knowable_at",
+    "clean_or_borderline", "leakage_check", "inclusion_status", "inclusion_reason",
+    "eligible_for_binary_scoring", "ground_truth_evidence"
+  ],
+  "properties": {
+    "candidate_id": { "type": "string", "description": "Unique across the whole corpus." },
+    "decision_type": {
+      "type": "string",
+      "enum": ["trivial_vs_staged", "agent_verification_applicable", "documented_limitation_vs_defect", "human_acceptance_required"]
+    },
+    "source_project": { "type": "string" },
+    "source_artifact": { "type": "string", "description": "Exact file path and line number(s)/commit, per the mining audit -- never paraphrased away." },
+    "decision_time_context": {
+      "type": "object",
+      "description": "Everything genuinely available before the decision (the 'A' information). model_facing_input must be derivable entirely from this object."
+    },
+    "model_facing_input": {
+      "description": "The literal input a model would see. Must be a controlled projection of decision_time_context; must never contain any field from ground_truth_evidence or (for DP-23) empirical_basis."
+    },
+    "ground_truth_label": {
+      "type": ["string", "null"],
+      "description": "Used by trivial_vs_staged, agent_verification_applicable, documented_limitation_vs_defect only. Always null for human_acceptance_required rows -- see normative_label/empirical_label instead."
+    },
+    "ambiguity_tier": {
+      "type": ["string", "null"],
+      "enum": ["obvious", "ambiguous", null],
+      "description": "agent_verification_applicable only."
+    },
+    "corpus_partition": {
+      "type": ["string", "null"],
+      "enum": ["deterministic_prefilter_validation", "system1_judgment", null],
+      "description": "agent_verification_applicable only. Obvious cases must never be marked system1_judgment."
+    },
+    "evidence_polarity": {
+      "type": ["string", "null"],
+      "enum": ["positive_match", "absence_based", null],
+      "description": "documented_limitation_vs_defect only. Must be reported/evaluated separately from each other -- never merged into one accuracy number."
+    },
+    "evidence_source_type": {
+      "type": ["string", "null"],
+      "enum": ["decision_document", "project_charter", "test_docstring", "design_doc", "code_architecture", null],
+      "description": "documented_limitation_vs_defect only -- what kind of documentation was actually consulted."
+    },
+    "normative_label": {
+      "type": ["string", "null"],
+      "enum": ["required", "sufficient_without", "indeterminate", null],
+      "description": "human_acceptance_required only. Whether the workflow/policy says acceptance is required -- never collapsed with empirical_label."
+    },
+    "normative_basis": { "type": ["string", "null"] },
+    "empirical_label": {
+      "type": ["string", "null"],
+      "enum": ["substantive_engagement", "bare_acknowledgment", "not_available", null],
+      "description": "human_acceptance_required only. Whether a human actually reviewed/accepted/rejected the work -- independent of normative_label."
+    },
+    "empirical_basis": {
+      "type": ["string", "null"],
+      "description": "The literal observed human response. Post-decision evidence -- must never appear in model_facing_input."
+    },
+    "normative_empirical_relationship": {
+      "type": ["string", "null"],
+      "enum": ["agree", "diverge", "empirical_unavailable", null],
+      "description": "human_acceptance_required only; derived, not independently asserted."
+    },
+    "ground_truth_evidence": {
+      "type": "object",
+      "required": ["quote", "citation", "verification_method"],
+      "description": "Post-decision evidence ('B' information). Never present in model_facing_input.",
+      "properties": {
+        "quote": { "type": "string" },
+        "citation": { "type": "string" },
+        "verification_method": { "type": "string" }
+      }
+    },
+    "ground_truth_knowable_at": {
+      "type": "string",
+      "enum": ["before_implementation", "after_implementation", "after_verification", "after_human_acceptance", "not_determinable"]
+    },
+    "clean_or_borderline": { "type": "string", "enum": ["clean", "borderline", "confounded"] },
+    "confound_reason": { "type": ["string", "null"], "description": "Required (non-null) when clean_or_borderline = confounded." },
+    "reused_evidence_of": { "type": ["string", "null"], "description": "candidate_id of another row sharing the same underlying source task, if any." },
+    "leakage_check": {
+      "type": "object",
+      "required": ["passed", "note"],
+      "properties": { "passed": { "type": "boolean" }, "note": { "type": "string" } }
+    },
+    "inclusion_status": { "type": "string", "enum": ["include", "include_as_borderline", "exclude"] },
+    "inclusion_reason": { "type": "string" },
+    "eligible_for_binary_scoring": {
+      "type": "boolean",
+      "description": "False for every trivial_vs_staged row regardless of inclusion_status (single-class real coverage cannot support a binary accuracy score). False for include_as_borderline/exclude rows generally; true only for clean, include rows in decisions with real coverage of more than one class."
+    }
+  }
+}

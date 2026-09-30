@@ -1,0 +1,20 @@
+{
+  "decision_type": "agent_verification_applicable",
+  "decision_question": "Given the files touched and a description of the change, can this change plausibly affect a user-visible or agent-observable flow (e.g. browser behavior), such that agent-tool verification (beyond deterministic checks like lint/tests) should be performed before treating the change as verified?",
+  "allowed_output_values": ["applicable", "not_applicable"],
+  "output_format": "Return exactly one of the allowed output values, optionally followed by a one-line rationale.",
+  "evaluator_supplies": ["model_facing_input"],
+  "forbidden_information": [
+    "candidate_id", "source_project", "source_artifact",
+    "ground_truth_label", "ground_truth_evidence", "ground_truth_knowable_at",
+    "inclusion_status", "inclusion_reason", "clean_or_borderline", "confound_reason",
+    "corpus_partition", "ambiguity_tier", "evidence_polarity", "evidence_source_type",
+    "reused_evidence_of", "leakage_check", "eligible_for_binary_scoring",
+    "normative_label", "normative_basis", "empirical_label", "empirical_basis",
+    "normative_empirical_relationship",
+    "whether any verification was actually performed or what it found"
+  ],
+  "ground_truth_target_field": "ground_truth_label",
+  "scored": true,
+  "evaluation_notes": "The corpus splits this decision type into two partitions that must never be pooled: 'deterministic_prefilter_validation' (obvious cases meant to validate a frozen deterministic file-path rule, not a model) and 'system1_judgment' (genuinely ambiguous cases, the only ones meant to be posed to a Claude/Laya system-1 judgment call). The partition label itself is corpus-internal bookkeeping and must never appear in or be derivable from the rendered prompt."
+}

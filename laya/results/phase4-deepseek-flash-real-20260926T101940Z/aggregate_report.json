@@ -1,0 +1,327 @@
+{
+  "trivial_vs_staged": {
+    "run_id": "phase4-deepseek-flash-real-20260926T101940Z",
+    "corpus_content_hash": "a3a5102aee5a948fed6aee86c3cd3c8a6c392bf70f7b5d34ab3795073a2c1a2b",
+    "schema_version": "1.0",
+    "decision_type": "trivial_vs_staged",
+    "model_identifier": "deepseek:deepseek-flash:thinking-disabled:effort-none",
+    "n": 7,
+    "valid_predictions": 7,
+    "invalid_predictions": 0,
+    "coverage": 1.0,
+    "accuracy": null,
+    "not_scored": true,
+    "reason": "trivial_vs_staged has no clean real 'trivial' example and no row of this decision_type is eligible_for_binary_scoring; predictions are recorded for qualitative review only and must never be aggregated into an accuracy figure"
+  },
+  "documented_limitation_vs_defect": {
+    "run_id": "phase4-deepseek-flash-real-20260926T101940Z",
+    "corpus_content_hash": "a3a5102aee5a948fed6aee86c3cd3c8a6c392bf70f7b5d34ab3795073a2c1a2b",
+    "schema_version": "1.0",
+    "decision_type": "documented_limitation_vs_defect",
+    "model_identifier": "deepseek:deepseek-flash:thinking-disabled:effort-none",
+    "blocks": {
+      "overall": {
+        "run_id": "phase4-deepseek-flash-real-20260926T101940Z",
+        "corpus_content_hash": "a3a5102aee5a948fed6aee86c3cd3c8a6c392bf70f7b5d34ab3795073a2c1a2b",
+        "schema_version": "1.0",
+        "decision_type": "documented_limitation_vs_defect",
+        "model_identifier": "deepseek:deepseek-flash:thinking-disabled:effort-none",
+        "n": 7,
+        "valid_predictions": 7,
+        "invalid_predictions": 0,
+        "correct": 7,
+        "incorrect": 0,
+        "accuracy": 1.0,
+        "coverage": 1.0,
+        "per_class_counts": {
+          "defect": 3,
+          "deliberate": 4
+        },
+        "confusion_matrix": {
+          "defect": {
+            "defect": 3,
+            "deliberate": 0
+          },
+          "deliberate": {
+            "defect": 0,
+            "deliberate": 4
+          }
+        },
+        "latency_ms": {
+          "available": true,
+          "n": 7,
+          "mean": 682.7021187140678,
+          "min": 543.1374709987722,
+          "max": 851.0792449997098
+        },
+        "input_tokens": {
+          "available": true,
+          "n": 7,
+          "mean": 212.57142857142858,
+          "min": 195,
+          "max": 233
+        },
+        "output_tokens": {
+          "available": true,
+          "n": 7,
+          "mean": 7.571428571428571,
+          "min": 7,
+          "max": 8
+        },
+        "calibration": {
+          "available": false
+        }
+      },
+      "positive_match": {
+        "run_id": "phase4-deepseek-flash-real-20260926T101940Z",
+        "corpus_content_hash": "a3a5102aee5a948fed6aee86c3cd3c8a6c392bf70f7b5d34ab3795073a2c1a2b",
+        "schema_version": "1.0",
+        "decision_type": "documented_limitation_vs_defect",
+        "model_identifier": "deepseek:deepseek-flash:thinking-disabled:effort-none",
+        "n": 5,
+        "valid_predictions": 5,
+        "invalid_predictions": 0,
+        "correct": 5,
+        "incorrect": 0,
+        "accuracy": 1.0,
+        "coverage": 1.0,
+        "per_class_counts": {
+          "defect": 1,
+          "deliberate": 4
+        },
+        "confusion_matrix": {
+          "defect": {
+            "defect": 1,
+            "deliberate": 0
+          },
+          "deliberate": {
+            "defect": 0,
+            "deliberate": 4
+          }
+        },
+        "latency_ms": {
+          "available": true,
+          "n": 5,
+          "mean": 707.6926776000619,
+          "min": 544.4882960000541,
+          "max": 851.0792449997098
+        },
+        "input_tokens": {
+          "available": true,
+          "n": 5,
+          "mean": 212.0,
+          "min": 195,
+          "max": 233
+        },
+        "output_tokens": {
+          "available": true,
+          "n": 5,
+          "mean": 7.8,
+          "min": 7,
+          "max": 8
+        },
+        "calibration": {
+          "available": false
+        },
+        "partition": "positive_match"
+      },
+      "absence_based": {
+        "run_id": "phase4-deepseek-flash-real-20260926T101940Z",
+        "corpus_content_hash": "a3a5102aee5a948fed6aee86c3cd3c8a6c392bf70f7b5d34ab3795073a2c1a2b",
+        "schema_version": "1.0",
+        "decision_type": "documented_limitation_vs_defect",
+        "model_identifier": "deepseek:deepseek-flash:thinking-disabled:effort-none",
+        "n": 2,
+        "valid_predictions": 2,
+        "invalid_predictions": 0,
+        "correct": 2,
+        "incorrect": 0,
+        "accuracy": 1.0,
+        "coverage": 1.0,
+        "per_class_counts": {
+          "defect": 2
+        },
+        "confusion_matrix": {
+          "defect": {
+            "defect": 2
+          }
+        },
+        "latency_ms": {
+          "available": true,
+          "n": 2,
+          "mean": 620.2257214990823,
+          "min": 543.1374709987722,
+          "max": 697.3139719993924
+        },
+        "input_tokens": {
+          "available": true,
+          "n": 2,
+          "mean": 214.0,
+          "min": 212,
+          "max": 216
+        },
+        "output_tokens": {
+          "available": true,
+          "n": 2,
+          "mean": 7.0,
+          "min": 7,
+          "max": 7
+        },
+        "calibration": {
+          "available": false
+        },
+        "partition": "absence_based"
+      }
+    }
+  },
+  "human_acceptance_required": {
+    "run_id": "phase4-deepseek-flash-real-20260926T101940Z",
+    "corpus_content_hash": "a3a5102aee5a948fed6aee86c3cd3c8a6c392bf70f7b5d34ab3795073a2c1a2b",
+    "schema_version": "1.0",
+    "decision_type": "human_acceptance_required",
+    "model_identifier": "deepseek:deepseek-flash:thinking-disabled:effort-none",
+    "n": 12,
+    "valid_predictions": 12,
+    "invalid_predictions": 0,
+    "correct": 10,
+    "incorrect": 2,
+    "accuracy": 0.8333333333333334,
+    "coverage": 1.0,
+    "per_class_counts": {
+      "required": 11,
+      "sufficient_without": 1
+    },
+    "confusion_matrix": {
+      "required": {
+        "required": 9,
+        "sufficient_without": 2
+      },
+      "sufficient_without": {
+        "required": 0,
+        "sufficient_without": 1
+      }
+    },
+    "latency_ms": {
+      "available": true,
+      "n": 12,
+      "mean": 628.7915663333479,
+      "min": 467.3844780008949,
+      "max": 777.9697440000746
+    },
+    "input_tokens": {
+      "available": true,
+      "n": 12,
+      "mean": 159.08333333333334,
+      "min": 146,
+      "max": 185
+    },
+    "output_tokens": {
+      "available": true,
+      "n": 12,
+      "mean": 6.75,
+      "min": 6,
+      "max": 9
+    },
+    "calibration": {
+      "available": false
+    }
+  },
+  "agent_verification_applicable": {
+    "run_id": "phase4-deepseek-flash-real-20260926T101940Z",
+    "corpus_content_hash": "a3a5102aee5a948fed6aee86c3cd3c8a6c392bf70f7b5d34ab3795073a2c1a2b",
+    "schema_version": "1.0",
+    "decision_type": "agent_verification_applicable",
+    "model_identifier": "mixed (see per-block model_identifier)",
+    "blocks": {
+      "deterministic_prefilter_validation": {
+        "run_id": "phase4-deepseek-flash-real-20260926T101940Z",
+        "corpus_content_hash": "a3a5102aee5a948fed6aee86c3cd3c8a6c392bf70f7b5d34ab3795073a2c1a2b",
+        "schema_version": "1.0",
+        "decision_type": "agent_verification_applicable",
+        "model_identifier": "deterministic_prefilter_v1.0",
+        "n": 6,
+        "valid_predictions": 4,
+        "invalid_predictions": 2,
+        "correct": 4,
+        "incorrect": 0,
+        "accuracy": 1.0,
+        "coverage": 0.6666666666666666,
+        "per_class_counts": {
+          "applicable": 5,
+          "not_applicable": 1
+        },
+        "confusion_matrix": {
+          "applicable": {
+            "applicable": 3,
+            "not_applicable": 0
+          },
+          "not_applicable": {
+            "applicable": 0,
+            "not_applicable": 1
+          }
+        },
+        "latency_ms": {
+          "available": false
+        },
+        "input_tokens": {
+          "available": false
+        },
+        "output_tokens": {
+          "available": false
+        },
+        "calibration": {
+          "available": false
+        },
+        "partition": "deterministic_prefilter_validation"
+      },
+      "system1_judgment": {
+        "run_id": "phase4-deepseek-flash-real-20260926T101940Z",
+        "corpus_content_hash": "a3a5102aee5a948fed6aee86c3cd3c8a6c392bf70f7b5d34ab3795073a2c1a2b",
+        "schema_version": "1.0",
+        "decision_type": "agent_verification_applicable",
+        "model_identifier": "deepseek:deepseek-flash:thinking-disabled:effort-none",
+        "n": 2,
+        "valid_predictions": 2,
+        "invalid_predictions": 0,
+        "correct": 2,
+        "incorrect": 0,
+        "accuracy": 1.0,
+        "coverage": 1.0,
+        "per_class_counts": {
+          "applicable": 2
+        },
+        "confusion_matrix": {
+          "applicable": {
+            "applicable": 2
+          }
+        },
+        "latency_ms": {
+          "available": true,
+          "n": 2,
+          "mean": 557.3275129991089,
+          "min": 525.9684409993497,
+          "max": 588.686584998868
+        },
+        "input_tokens": {
+          "available": true,
+          "n": 2,
+          "mean": 234.0,
+          "min": 217,
+          "max": 251
+        },
+        "output_tokens": {
+          "available": true,
+          "n": 2,
+          "mean": 7.0,
+          "min": 7,
+          "max": 7
+        },
+        "calibration": {
+          "available": false
+        },
+        "partition": "system1_judgment",
+        "sample_size_warning": true
+      }
+    }
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "laya-phase-4.2-prediction-result",
+  "schema_version": "1.0",
+  "description": "Canonical, adapter-agnostic prediction record. Any evaluated system (a deterministic prefilter, Claude, Laya, JEV, or a future baseline) reports one result per corpus row in exactly this shape, so scoring code never branches on which adapter produced it. Adapters are NOT implemented in this slice; this schema exists so later slices have a fixed target. No adapter-specific fields are permitted here -- adapter-specific detail belongs only in raw_response.",
+  "type": "object",
+  "required": [
+    "candidate_id", "decision_type", "run_id", "model_identifier",
+    "predicted_value", "valid_prediction", "latency_ms",
+    "error", "timestamp", "corpus_content_hash"
+  ],
+  "properties": {
+    "candidate_id": {
+      "type": "string",
+      "description": "The corpus row this prediction is for. Result-bookkeeping metadata only -- never present in the rendered model input itself."
+    },
+    "decision_type": {
+      "type": "string",
+      "enum": ["trivial_vs_staged", "agent_verification_applicable", "documented_limitation_vs_defect", "human_acceptance_required"]
+    },
+    "run_id": {
+      "type": "string",
+      "description": "Identifies one evaluation run (a batch of predictions produced together), so repeated runs of the same corpus can be told apart."
+    },
+    "model_identifier": {
+      "type": "string",
+      "description": "Free-text identifier of the system that produced the prediction, e.g. 'deterministic_prefilter_v1', 'claude-sonnet-5', 'laya_v0'. Not an enum -- new systems must not require a schema change."
+    },
+    "predicted_value": {
+      "type": ["string", "null"],
+      "description": "The system's chosen output, restricted to the allowed_output_values of the matching prompt contract. Null when the system produced no usable answer (see valid_prediction/error)."
+    },
+    "valid_prediction": {
+      "type": "boolean",
+      "description": "True only if predicted_value is one of the prompt contract's allowed_output_values. False for a malformed, empty, or off-contract response -- scoring code must never coerce an invalid value into a guess."
+    },
+    "confidence": {
+      "type": ["number", "null"],
+      "description": "Optional self-reported confidence in [0,1]. Null when the system does not provide one -- never fabricated."
+    },
+    "probability_distribution": {
+      "type": ["object", "null"],
+      "description": "Optional map of allowed_output_value -> probability, for systems that expose one (e.g. a deterministic rule or a calibrated classifier). Null when unavailable.",
+      "additionalProperties": { "type": "number" }
+    },
+    "latency_ms": {
+      "type": ["number", "null"],
+      "description": "Wall-clock time to produce this one prediction. Null when not measured (e.g. a deterministic rule with negligible, unmeasured cost)."
+    },
+    "input_tokens": { "type": ["integer", "null"], "description": "Null for adapters with no token concept (e.g. a deterministic rule)." },
+    "output_tokens": { "type": ["integer", "null"] },
+    "cache_read_tokens": { "type": ["integer", "null"] },
+    "cache_write_tokens": { "type": ["integer", "null"] },
+    "error": {
+      "type": ["string", "null"],
+      "description": "Non-null describes what went wrong (timeout, refusal, malformed output, leakage-preflight failure, etc.); null means the call completed without error, independent of whether the prediction was valid."
+    },
+    "timestamp": {
+      "type": "string",
+      "description": "ISO-8601 UTC time the prediction was produced."
+    },
+    "corpus_content_hash": {
+      "type": "string",
+      "description": "SHA-256 hash of the exact corpus file this prediction was scored against (see the corpus loader), so a result can never be silently compared against a corpus revision it wasn't produced from."
+    },
+    "raw_response": {
+      "description": "Opaque, adapter-specific debugging payload (e.g. the full model response). Never read by scoring code; present only for post-hoc inspection."
+    }
+  }
+}

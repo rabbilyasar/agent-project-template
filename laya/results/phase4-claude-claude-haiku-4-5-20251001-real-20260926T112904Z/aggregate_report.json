@@ -1,0 +1,327 @@
+{
+  "trivial_vs_staged": {
+    "run_id": "phase4-claude-claude-haiku-4-5-20251001-real-20260926T112904Z",
+    "corpus_content_hash": "a3a5102aee5a948fed6aee86c3cd3c8a6c392bf70f7b5d34ab3795073a2c1a2b",
+    "schema_version": "1.0",
+    "decision_type": "trivial_vs_staged",
+    "model_identifier": "claude:claude-haiku-4-5-20251001:direct-api",
+    "n": 7,
+    "valid_predictions": 1,
+    "invalid_predictions": 6,
+    "coverage": 0.14285714285714285,
+    "accuracy": null,
+    "not_scored": true,
+    "reason": "trivial_vs_staged has no clean real 'trivial' example and no row of this decision_type is eligible_for_binary_scoring; predictions are recorded for qualitative review only and must never be aggregated into an accuracy figure"
+  },
+  "documented_limitation_vs_defect": {
+    "run_id": "phase4-claude-claude-haiku-4-5-20251001-real-20260926T112904Z",
+    "corpus_content_hash": "a3a5102aee5a948fed6aee86c3cd3c8a6c392bf70f7b5d34ab3795073a2c1a2b",
+    "schema_version": "1.0",
+    "decision_type": "documented_limitation_vs_defect",
+    "model_identifier": "claude:claude-haiku-4-5-20251001:direct-api",
+    "blocks": {
+      "overall": {
+        "run_id": "phase4-claude-claude-haiku-4-5-20251001-real-20260926T112904Z",
+        "corpus_content_hash": "a3a5102aee5a948fed6aee86c3cd3c8a6c392bf70f7b5d34ab3795073a2c1a2b",
+        "schema_version": "1.0",
+        "decision_type": "documented_limitation_vs_defect",
+        "model_identifier": "claude:claude-haiku-4-5-20251001:direct-api",
+        "n": 7,
+        "valid_predictions": 0,
+        "invalid_predictions": 7,
+        "correct": 0,
+        "incorrect": 0,
+        "accuracy": null,
+        "coverage": 0.0,
+        "per_class_counts": {
+          "defect": 3,
+          "deliberate": 4
+        },
+        "confusion_matrix": {
+          "defect": {
+            "defect": 0,
+            "deliberate": 0
+          },
+          "deliberate": {
+            "defect": 0,
+            "deliberate": 0
+          }
+        },
+        "latency_ms": {
+          "available": true,
+          "n": 7,
+          "mean": 869.3783819999226,
+          "min": 777.0502069997747,
+          "max": 977.7474959992105
+        },
+        "input_tokens": {
+          "available": true,
+          "n": 7,
+          "mean": 202.14285714285714,
+          "min": 180,
+          "max": 224
+        },
+        "output_tokens": {
+          "available": true,
+          "n": 7,
+          "mean": 15.0,
+          "min": 15,
+          "max": 15
+        },
+        "calibration": {
+          "available": false
+        }
+      },
+      "positive_match": {
+        "run_id": "phase4-claude-claude-haiku-4-5-20251001-real-20260926T112904Z",
+        "corpus_content_hash": "a3a5102aee5a948fed6aee86c3cd3c8a6c392bf70f7b5d34ab3795073a2c1a2b",
+        "schema_version": "1.0",
+        "decision_type": "documented_limitation_vs_defect",
+        "model_identifier": "claude:claude-haiku-4-5-20251001:direct-api",
+        "n": 5,
+        "valid_predictions": 0,
+        "invalid_predictions": 5,
+        "correct": 0,
+        "incorrect": 0,
+        "accuracy": null,
+        "coverage": 0.0,
+        "per_class_counts": {
+          "defect": 1,
+          "deliberate": 4
+        },
+        "confusion_matrix": {
+          "defect": {
+            "defect": 0,
+            "deliberate": 0
+          },
+          "deliberate": {
+            "defect": 0,
+            "deliberate": 0
+          }
+        },
+        "latency_ms": {
+          "available": true,
+          "n": 5,
+          "mean": 863.7762061996909,
+          "min": 777.0502069997747,
+          "max": 977.7474959992105
+        },
+        "input_tokens": {
+          "available": true,
+          "n": 5,
+          "mean": 201.4,
+          "min": 180,
+          "max": 224
+        },
+        "output_tokens": {
+          "available": true,
+          "n": 5,
+          "mean": 15.0,
+          "min": 15,
+          "max": 15
+        },
+        "calibration": {
+          "available": false
+        },
+        "partition": "positive_match"
+      },
+      "absence_based": {
+        "run_id": "phase4-claude-claude-haiku-4-5-20251001-real-20260926T112904Z",
+        "corpus_content_hash": "a3a5102aee5a948fed6aee86c3cd3c8a6c392bf70f7b5d34ab3795073a2c1a2b",
+        "schema_version": "1.0",
+        "decision_type": "documented_limitation_vs_defect",
+        "model_identifier": "claude:claude-haiku-4-5-20251001:direct-api",
+        "n": 2,
+        "valid_predictions": 0,
+        "invalid_predictions": 2,
+        "correct": 0,
+        "incorrect": 0,
+        "accuracy": null,
+        "coverage": 0.0,
+        "per_class_counts": {
+          "defect": 2
+        },
+        "confusion_matrix": {
+          "defect": {
+            "defect": 0
+          }
+        },
+        "latency_ms": {
+          "available": true,
+          "n": 2,
+          "mean": 883.3838215005017,
+          "min": 882.3433950001345,
+          "max": 884.4242480008688
+        },
+        "input_tokens": {
+          "available": true,
+          "n": 2,
+          "mean": 204.0,
+          "min": 204,
+          "max": 204
+        },
+        "output_tokens": {
+          "available": true,
+          "n": 2,
+          "mean": 15.0,
+          "min": 15,
+          "max": 15
+        },
+        "calibration": {
+          "available": false
+        },
+        "partition": "absence_based"
+      }
+    }
+  },
+  "human_acceptance_required": {
+    "run_id": "phase4-claude-claude-haiku-4-5-20251001-real-20260926T112904Z",
+    "corpus_content_hash": "a3a5102aee5a948fed6aee86c3cd3c8a6c392bf70f7b5d34ab3795073a2c1a2b",
+    "schema_version": "1.0",
+    "decision_type": "human_acceptance_required",
+    "model_identifier": "claude:claude-haiku-4-5-20251001:direct-api",
+    "n": 12,
+    "valid_predictions": 3,
+    "invalid_predictions": 9,
+    "correct": 3,
+    "incorrect": 0,
+    "accuracy": 1.0,
+    "coverage": 0.25,
+    "per_class_counts": {
+      "required": 11,
+      "sufficient_without": 1
+    },
+    "confusion_matrix": {
+      "required": {
+        "required": 3,
+        "sufficient_without": 0
+      },
+      "sufficient_without": {
+        "required": 0,
+        "sufficient_without": 0
+      }
+    },
+    "latency_ms": {
+      "available": true,
+      "n": 12,
+      "mean": 834.0781524167747,
+      "min": 750.9537379992253,
+      "max": 901.2392190015817
+    },
+    "input_tokens": {
+      "available": true,
+      "n": 12,
+      "mean": 144.83333333333334,
+      "min": 130,
+      "max": 171
+    },
+    "output_tokens": {
+      "available": true,
+      "n": 12,
+      "mean": 12.916666666666666,
+      "min": 9,
+      "max": 16
+    },
+    "calibration": {
+      "available": false
+    }
+  },
+  "agent_verification_applicable": {
+    "run_id": "phase4-claude-claude-haiku-4-5-20251001-real-20260926T112904Z",
+    "corpus_content_hash": "a3a5102aee5a948fed6aee86c3cd3c8a6c392bf70f7b5d34ab3795073a2c1a2b",
+    "schema_version": "1.0",
+    "decision_type": "agent_verification_applicable",
+    "model_identifier": "mixed (see per-block model_identifier)",
+    "blocks": {
+      "deterministic_prefilter_validation": {
+        "run_id": "phase4-claude-claude-haiku-4-5-20251001-real-20260926T112904Z",
+        "corpus_content_hash": "a3a5102aee5a948fed6aee86c3cd3c8a6c392bf70f7b5d34ab3795073a2c1a2b",
+        "schema_version": "1.0",
+        "decision_type": "agent_verification_applicable",
+        "model_identifier": "deterministic_prefilter_v1.0",
+        "n": 6,
+        "valid_predictions": 4,
+        "invalid_predictions": 2,
+        "correct": 4,
+        "incorrect": 0,
+        "accuracy": 1.0,
+        "coverage": 0.6666666666666666,
+        "per_class_counts": {
+          "applicable": 5,
+          "not_applicable": 1
+        },
+        "confusion_matrix": {
+          "applicable": {
+            "applicable": 3,
+            "not_applicable": 0
+          },
+          "not_applicable": {
+            "applicable": 0,
+            "not_applicable": 1
+          }
+        },
+        "latency_ms": {
+          "available": false
+        },
+        "input_tokens": {
+          "available": false
+        },
+        "output_tokens": {
+          "available": false
+        },
+        "calibration": {
+          "available": false
+        },
+        "partition": "deterministic_prefilter_validation"
+      },
+      "system1_judgment": {
+        "run_id": "phase4-claude-claude-haiku-4-5-20251001-real-20260926T112904Z",
+        "corpus_content_hash": "a3a5102aee5a948fed6aee86c3cd3c8a6c392bf70f7b5d34ab3795073a2c1a2b",
+        "schema_version": "1.0",
+        "decision_type": "agent_verification_applicable",
+        "model_identifier": "claude:claude-haiku-4-5-20251001:direct-api",
+        "n": 2,
+        "valid_predictions": 1,
+        "invalid_predictions": 1,
+        "correct": 1,
+        "incorrect": 0,
+        "accuracy": 1.0,
+        "coverage": 0.5,
+        "per_class_counts": {
+          "applicable": 2
+        },
+        "confusion_matrix": {
+          "applicable": {
+            "applicable": 1
+          }
+        },
+        "latency_ms": {
+          "available": true,
+          "n": 2,
+          "mean": 951.381887000025,
+          "min": 872.0436910007265,
+          "max": 1030.7200829993235
+        },
+        "input_tokens": {
+          "available": true,
+          "n": 2,
+          "mean": 225.0,
+          "min": 208,
+          "max": 242
+        },
+        "output_tokens": {
+          "available": true,
+          "n": 2,
+          "mean": 11.5,
+          "min": 9,
+          "max": 14
+        },
+        "calibration": {
+          "available": false
+        },
+        "partition": "system1_judgment",
+        "sample_size_warning": true
+      }
+    }
+  }
+}
