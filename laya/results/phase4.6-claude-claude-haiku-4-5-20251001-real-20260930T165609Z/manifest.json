@@ -1,0 +1,27 @@
+{
+  "run_id": "phase4.6-claude-claude-haiku-4-5-20251001-real-20260930T165609Z",
+  "corpus_content_hash": "a3a5102aee5a948fed6aee86c3cd3c8a6c392bf70f7b5d34ab3795073a2c1a2b",
+  "result_schema_version": "1.0",
+  "deterministic_prefilter_rule_version": "1.0",
+  "provider": "claude",
+  "model": "claude-haiku-4-5-20251001",
+  "max_tokens": 64,
+  "anthropic_version": "2023-06-01",
+  "model_identifier": "claude:claude-haiku-4-5-20251001:direct-api",
+  "harness_git_commit": "b9a6bb93838654329ea42e04b86f253fa453c44e",
+  "harness_uncommitted_changes": false,
+  "prompt_contract_sha256": {
+    "agent_verification_applicable.json": "580a6ccf20fe4951d05721cac0483ac060616ce976861aaeb2b73a7d4c8d6481",
+    "documented_limitation_vs_defect.json": "20c7d7fdc60c8ce427ec4c709d19dafd19f2bae9015b3d8ee6ffe54d8194d0f4",
+    "human_acceptance_required.json": "96a2c3da58cd92a2b056069db35f73b632c88f967c6065bda4abc371f37f4a64",
+    "trivial_vs_staged.json": "9ce0af5c934f620dd5cb31d2d511643fc270c2a87353d6adf74c20a399a2676e"
+  },
+  "planned_claude_call_count": 26,
+  "skipped_excluded_candidate_ids": [
+    "AGENT-DP11-01",
+    "JOSS-DP11-01",
+    "ZEUS-DP16-02"
+  ],
+  "started_at": "2026-09-30T16:56:09.266036+00:00",
+  "completed_at": "2026-09-30T16:56:33.596939+00:00"
+}
