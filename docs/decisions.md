@@ -317,6 +317,81 @@ this checkpoint: re-running requires a live Anthropic API call, which is out of 
 foundation-closure checkpoint, and deleting historical evidence of a real defect (even a fixed
 one) would itself be a reproducibility regression.
 
+---
+
+### ADR-007 — `eligible_for_binary_scoring` is authoritative for binary evaluation
+
+**Status:** Accepted
+
+**Date:** 2026-09-30
+
+**Context**
+
+The corpus schema (`laya/schema/decision_corpus_schema.json`) gives every row an
+`eligible_for_binary_scoring` flag: false for every `trivial_vs_staged` row, false for
+`include_as_borderline`/`exclude` rows generally, true only for clean `include` rows. The
+harness never read this flag. The three `09_run_evaluation*.py` runners filtered only
+`inclusion_status == "exclude"`, and `07_aggregate_report.py` scored whatever batch it was
+given. As a result, all three 2026-09-26 aggregate reports count `include_as_borderline` rows
+with `eligible_for_binary_scoring: false` toward accuracy (five such rows in the Laya run).
+`trivial_vs_staged` was unaffected, because it was already never scored, by decision type.
+
+Three concepts that the harness had conflated are distinct:
+
+- **Corpus inclusion** (`inclusion_status`: `include` / `include_as_borderline` / `exclude`):
+  whether a row belongs in the corpus as evaluation material. Borderline rows remain in the
+  corpus, are sent to models, and have their predictions recorded.
+- **Binary scoring eligibility** (`eligible_for_binary_scoring`): whether a row's ground truth
+  is clean enough to count a prediction as correct or incorrect.
+- **Mechanism partitioning** (DP-22 `corpus_partition`, DP-16 `evidence_polarity`): which
+  scored block a row belongs to (ADR-002, ADR-005). This is independent of eligibility.
+
+**Decision**
+
+- `eligible_for_binary_scoring` is authoritative for binary evaluation. A row with the flag
+  false, or missing, contributes nothing to any block's `n`, correctness counts, accuracy,
+  coverage, or calibration. Instead it is listed in that block's
+  `binary_scoring_ineligible_ids`. This is enforced once, in `07_aggregate_report._block`,
+  which every scored block routes through.
+- `inclusion_status == "exclude"` stays an independent inclusion concept and is also enforced
+  there. It is not inferred from the eligibility flag.
+- Partitioning, the DP-23 `normative_label` target, DP-11's not-scored status, and the rule
+  that an invalid prediction is a coverage gap rather than an incorrect answer are all
+  unchanged.
+- The DP-22 `deterministic_prefilter_validation` block carries a `prefilter_routing` breakdown
+  so a reader can separate the whole partition's rows (`partition_rows_total`), rows the rule
+  resolved (`handled`), rows it left unresolved (`deferred`, `deferred_ids`), rows eligible for
+  binary scoring (`binary_scoring_eligible`, equal to the block's `n`), and rows actually
+  scored (`scored`). Deferred rows in this partition are not routed to System-1, because
+  routing is by partition (ADR-002). Within the block, an eligible deferral counts toward
+  `invalid_predictions` and lowers `coverage`; it never lowers `accuracy`.
+- Historical aggregate reports are immutable evidence (ADR-006) and are not rewritten. Formal
+  reports may be regenerated offline from preserved `predictions.jsonl` with
+  `laya/harness/lib/10_rescore_offline.py`. That script writes a separate
+  `<run_id>--rescore-eligible-only-v1/` directory whose manifest records the source artifact
+  hashes, corpus hash, scoring policy, and scoring-module hashes.
+
+**Rationale**
+
+The flag was authored at corpus-construction time, before any prediction existed, precisely to
+mark ground truth too weak for a binary score. Ignoring it let borderline labels move headline
+accuracy. For the Laya run, DP-16 overall moves from 5/7 to 3/5, DP-23 from 5/12 to 3/10, and
+DP-22 System-1 from 1/2 to 0/1. The predictions themselves do not depend on the scoring policy,
+so no model rerun is needed.
+
+**Consequences**
+
+Positive: reported accuracy now matches the corpus contract, the policy is enforced at one
+point, and the excluded rows are visible by ID. Negative: already-small blocks shrink further
+(DP-22 System-1 and DP-16 `absence_based` become n=1). Any figure cited from an original
+2026-09-26 `aggregate_report.json` is exclude-only and must be labelled as such.
+
+**Alternatives Considered**
+
+Keeping exclude-only scoring and documenting the flag as DP-11-only was rejected: it contradicts
+the schema's own definition of the flag. Rewriting the historical reports in place was rejected
+under ADR-006.
+
 ## Statuses
 
 - **Proposed** — under consideration.

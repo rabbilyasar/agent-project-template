@@ -80,6 +80,95 @@ def main() -> int:
     dp23_report = aggregate.build_report("human_acceptance_required", dp23_results, dp23_rows, "run-4", "hash", "1.0", "m1")
     checks.append(("DP-23 report scores against normative_label despite empirical divergence", dp23_report["accuracy"] == 1.0))
 
+    # --- ADR-007: eligible_for_binary_scoring is authoritative for binary scoring ---
+    def borderline(row: dict) -> dict:
+        return {**row, "inclusion_status": "include_as_borderline", "eligible_for_binary_scoring": False}
+
+    elig_dp16_rows = {
+        "E1": dp16_row("E1", "positive_match", "deliberate"),
+        "B1": borderline(dp16_row("B1", "positive_match", "deliberate")),
+        "B2": borderline(dp16_row("B2", "absence_based", "defect")),
+    }
+    elig_dp16_results = [
+        canonical_result("E1", "documented_limitation_vs_defect", "deliberate"),
+        canonical_result("B1", "documented_limitation_vs_defect", "defect"),  # would be incorrect
+        canonical_result("B2", "documented_limitation_vs_defect", "deliberate"),  # would be incorrect
+    ]
+    elig_dp16 = aggregate.build_report("documented_limitation_vs_defect", elig_dp16_results, elig_dp16_rows, "run-5", "hash", "1.0", "m1")["blocks"]
+    checks.append(("borderline ineligible DP-16 rows do not contribute to overall accuracy",
+                   elig_dp16["overall"]["n"] == 1 and elig_dp16["overall"]["correct"] == 1 and elig_dp16["overall"]["accuracy"] == 1.0))
+    checks.append(("ineligible rows are listed by ID, not silently dropped",
+                   elig_dp16["overall"]["binary_scoring_ineligible_ids"] == ["B1", "B2"]))
+    checks.append(("polarity block with only ineligible rows scores nothing",
+                   elig_dp16["absence_based"]["n"] == 0 and elig_dp16["absence_based"]["accuracy"] is None))
+
+    elig_dp23_rows = {
+        "N1": dp23_row("N1", normative_label="required"),
+        "NB": borderline(dp23_row("NB", normative_label="required")),
+    }
+    elig_dp23_results = [
+        canonical_result("N1", "human_acceptance_required", "required"),
+        canonical_result("NB", "human_acceptance_required", "sufficient_without"),  # would be incorrect
+    ]
+    elig_dp23 = aggregate.build_report("human_acceptance_required", elig_dp23_results, elig_dp23_rows, "run-6", "hash", "1.0", "m1")
+    checks.append(("borderline ineligible DP-23 row does not contribute to normative accuracy",
+                   elig_dp23["n"] == 1 and elig_dp23["accuracy"] == 1.0))
+
+    elig_dp22_rows = {
+        "S1": dp22_row("S1", "system1_judgment", "applicable"),
+        "SB": borderline(dp22_row("SB", "system1_judgment", "applicable")),
+    }
+    elig_dp22_results = [
+        canonical_result("S1", "agent_verification_applicable", "not_applicable"),
+        canonical_result("SB", "agent_verification_applicable", "applicable"),  # would be correct
+    ]
+    elig_dp22 = aggregate.build_report("agent_verification_applicable", elig_dp22_results, elig_dp22_rows, "run-7", "hash", "1.0", "m1")
+    s1 = elig_dp22["blocks"]["system1_judgment"]
+    checks.append(("borderline ineligible DP-22 System-1 row does not contribute (cannot inflate accuracy either)",
+                   s1["n"] == 1 and s1["accuracy"] == 0.0 and s1["sample_size_warning"] is True))
+
+    excl_rows = {
+        "X1": {**dp16_row("X1", "positive_match", "deliberate"), "inclusion_status": "exclude"},  # flag left True
+        "M1": {k: v for k, v in dp16_row("M1", "positive_match", "deliberate").items() if k != "eligible_for_binary_scoring"},
+        "V1": dp16_row("V1", "positive_match", "deliberate"),
+    }
+    excl_results = [
+        canonical_result("X1", "documented_limitation_vs_defect", "defect"),
+        canonical_result("M1", "documented_limitation_vs_defect", "defect"),
+        canonical_result("V1", "documented_limitation_vs_defect", None, valid=False),
+    ]
+    excl = aggregate.build_report("documented_limitation_vs_defect", excl_results, excl_rows, "run-8", "hash", "1.0", "m1")["blocks"]["overall"]
+    checks.append(("exclude row is kept out independently of its eligibility flag", "X1" in excl["binary_scoring_ineligible_ids"]))
+    checks.append(("missing eligibility flag is treated as ineligible", "M1" in excl["binary_scoring_ineligible_ids"]))
+    checks.append(("invalid prediction on an eligible row stays a coverage gap, not an incorrect count",
+                   excl["n"] == 1 and excl["invalid_predictions"] == 1 and excl["incorrect"] == 0
+                   and excl["coverage"] == 0.0 and excl["accuracy"] is None))
+
+    # --- DP-22 prefilter block: total / handled / deferred / eligible / scored are distinguishable ---
+    pf_id = aggregate._prefilter.MODEL_IDENTIFIER
+    pf_rows = {
+        "H1": dp22_row("H1", "deterministic_prefilter_validation", "applicable"),
+        "H2": dp22_row("H2", "deterministic_prefilter_validation", "applicable"),
+        "DE": dp22_row("DE", "deterministic_prefilter_validation", "applicable"),  # eligible, deferred
+        "DB": borderline(dp22_row("DB", "deterministic_prefilter_validation", "applicable")),  # ineligible, deferred
+    }
+    pf_results = [
+        canonical_result("H1", "agent_verification_applicable", "applicable", model_identifier=pf_id),
+        canonical_result("H2", "agent_verification_applicable", "not_applicable", model_identifier=pf_id),
+        canonical_result("DE", "agent_verification_applicable", None, valid=False, model_identifier=pf_id),
+        canonical_result("DB", "agent_verification_applicable", None, valid=False, model_identifier=pf_id),
+    ]
+    pf = aggregate.build_report("agent_verification_applicable", pf_results, pf_rows, "run-9", "hash", "1.0", pf_id)["blocks"]["deterministic_prefilter_validation"]
+    checks.append(("prefilter routing counts cover the whole partition before eligibility filtering",
+                   pf["prefilter_routing"] == {
+                       "partition_rows_total": 4, "handled": 2, "deferred": 2, "deferred_ids": ["DB", "DE"],
+                       "deferred_routed_to_system1": False, "binary_scoring_eligible": 3, "scored": 2,
+                   }))
+    checks.append(("eligible deferral lowers coverage, never accuracy",
+                   pf["n"] == 3 and pf["invalid_predictions"] == 1 and pf["accuracy"] == 0.5 and abs(pf["coverage"] - 2 / 3) < 1e-9))
+    checks.append(("prefilter_routing is not attached to a model-produced block",
+                   "prefilter_routing" not in dp22_report["blocks"]["deterministic_prefilter_validation"]))
+
     # Metadata plumbing.
     checks.append(("aggregate report carries run_id through", dp22_report["run_id"] == "run-2"))
     checks.append(("aggregate report carries corpus_content_hash through", dp22_report["corpus_content_hash"] == "hash"))

@@ -10,6 +10,8 @@ decision_type, applying the decision-specific composition rules approved for Pha
 - documented_limitation_vs_defect: overall + positive_match + absence_based, kept separate.
 - human_acceptance_required: one block, scored only against normative_label (enforced by
   stage 6's resolve_target_field, which raises on any other target).
+- Every scored block counts only rows whose corpus eligible_for_binary_scoring is true and
+  whose inclusion_status is not exclude (ADR-007); the rest are listed by ID, not scored.
 
 Never produces model comparison, ranking, or "winner" language -- that is out of scope for
 this slice and is not implemented here at all.
@@ -24,6 +26,7 @@ from _module_loader import load_lib_module  # noqa: E402
 
 _score = load_lib_module("06_score.py", "score")
 _calibration = load_lib_module("05_calibration.py", "calibration")
+_prefilter = load_lib_module("04_deterministic_prefilter.py", "prefilter")
 
 
 def _numeric_stats(values: list) -> dict:
@@ -41,11 +44,30 @@ def _calibration_for_batch(results_by_id: dict, scored: list) -> dict:
     return _calibration.calibration_summary(pairs)
 
 
+def is_binary_scoring_eligible(corpus_row_raw: dict) -> bool:
+    """ADR-007: the corpus row's own eligible_for_binary_scoring flag is authoritative for
+    whether a prediction may count toward binary correctness. inclusion_status=exclude is an
+    independent corpus-inclusion concept and is also enforced here, never inferred from the
+    flag. A missing flag is treated as ineligible (never assumed scorable)."""
+    return (
+        corpus_row_raw.get("eligible_for_binary_scoring") is True
+        and corpus_row_raw.get("inclusion_status") != "exclude"
+    )
+
+
 def _block(
     decision_type: str, results: list[dict], corpus_rows_by_id: dict, run_id: str,
     corpus_content_hash: str, schema_version: str, model_identifier: str,
     partition: str | None = None, target_field: str | None = None,
 ) -> dict:
+    # Every scored block routes through here, so this is the single point that enforces
+    # binary-scoring eligibility (ADR-007). Ineligible rows are still recorded in
+    # predictions.jsonl; they are only kept out of this block's scored batch.
+    ineligible_ids = sorted(
+        r["candidate_id"] for r in results
+        if not is_binary_scoring_eligible(corpus_rows_by_id[r["candidate_id"]])
+    )
+    results = [r for r in results if r["candidate_id"] not in ineligible_ids]
     scored = _score.score_batch(results, corpus_rows_by_id, decision_type, target_field)
     results_by_id = {r["candidate_id"]: r for r in results}
     block = {
@@ -59,6 +81,7 @@ def _block(
         "input_tokens": _numeric_stats([r.get("input_tokens") for r in results]),
         "output_tokens": _numeric_stats([r.get("output_tokens") for r in results]),
         "calibration": _calibration_for_batch(results_by_id, scored),
+        "binary_scoring_ineligible_ids": ineligible_ids,
     }
     if partition is not None:
         block["partition"] = partition
@@ -108,6 +131,23 @@ def build_agent_verification_applicable_report(
             # fixed at exactly 2 rows (see laya/README.md) -- Phase 4.2 explicitly rejected
             # baking a generic n-threshold into the evaluator.
             block["sample_size_warning"] = True
+        if partition == "deterministic_prefilter_validation" and all(
+            r["model_identifier"] == _prefilter.MODEL_IDENTIFIER for r in group
+        ):
+            # The rule emits a valid prediction iff it handled the row, so valid_prediction
+            # is the handled/deferred signal (raw_response is never read here). Deferred rows
+            # in this partition get no decision from any mechanism: routing to System-1 is by
+            # partition (ADR-002), not by deferral.
+            deferred_ids = sorted(r["candidate_id"] for r in group if not r.get("valid_prediction"))
+            block["prefilter_routing"] = {
+                "partition_rows_total": len(group),
+                "handled": len(group) - len(deferred_ids),
+                "deferred": len(deferred_ids),
+                "deferred_ids": deferred_ids,
+                "deferred_routed_to_system1": False,
+                "binary_scoring_eligible": block["n"],
+                "scored": block["correct"] + block["incorrect"],
+            }
         blocks[partition] = block
 
     return {
