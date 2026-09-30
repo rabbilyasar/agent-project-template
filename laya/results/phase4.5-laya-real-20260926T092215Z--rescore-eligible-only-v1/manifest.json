@@ -1,0 +1,27 @@
+{
+  "derived_artifact_id": "phase4.5-laya-real-20260926T092215Z--rescore-eligible-only-v1",
+  "derivation": "offline re-aggregation of preserved predictions; no model inference, no adapter, no network",
+  "model_inference_performed": false,
+  "scoring_policy": "eligible_only_v1 (ADR-007)",
+  "source_run_id": "phase4.5-laya-real-20260926T092215Z",
+  "source_run_dir": "laya/results/phase4.5-laya-real-20260926T092215Z",
+  "source_artifact_sha256": {
+    "predictions.jsonl": "69a4f174b5149d2bb90f756a98cacb376599c913afaed6e2674f1bd49ef13020",
+    "manifest.json": "1899e689a5e4ea5df094c20a59bae803d54f2e22c15d765dc00e152aa67288dd",
+    "aggregate_report.json": "ad58df67d9e05e76fe5e3393f8802df8c78e2aa33d8f154402f61466f10ee33b"
+  },
+  "source_artifacts_modified": false,
+  "corpus_content_hash": "a3a5102aee5a948fed6aee86c3cd3c8a6c392bf70f7b5d34ab3795073a2c1a2b",
+  "result_schema_version": "1.0",
+  "deterministic_prefilter_rule_version": "1.0",
+  "source_model_identifier": "laya:0.3.20:convaiinnovations/laya-typed-decisions",
+  "harness_git_commit": "65e99aa9856e8934e02483ab780b1521aabb607b",
+  "harness_uncommitted_changes": false,
+  "scoring_module_sha256": {
+    "05_calibration.py": "1333b883db8aa9181efea50e5383986e857136b4bb7237b44157b4b6607560cc",
+    "06_score.py": "491c49ecea2fb8173f3ae527bf375a3403aaea52694c98a887f4a88bb7244ce7",
+    "07_aggregate_report.py": "7fd60b7b06ffc38ead21086448ea8e2c17eb7b681ee457a91d8ffe086832f663",
+    "10_rescore_offline.py": "64d719744862bfa1e16caa698a611ab20dccc1ac0ce26a647a552ba8ff7b24ca"
+  },
+  "generated_at": "2026-09-30T13:25:39.306777+00:00"
+}

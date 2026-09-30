@@ -1,0 +1,362 @@
+{
+  "trivial_vs_staged": {
+    "run_id": "phase4.5-laya-real-20260926T092215Z",
+    "corpus_content_hash": "a3a5102aee5a948fed6aee86c3cd3c8a6c392bf70f7b5d34ab3795073a2c1a2b",
+    "schema_version": "1.0",
+    "decision_type": "trivial_vs_staged",
+    "model_identifier": "laya:0.3.20:convaiinnovations/laya-typed-decisions",
+    "n": 7,
+    "valid_predictions": 7,
+    "invalid_predictions": 0,
+    "coverage": 1.0,
+    "accuracy": null,
+    "not_scored": true,
+    "reason": "trivial_vs_staged has no clean real 'trivial' example and no row of this decision_type is eligible_for_binary_scoring; predictions are recorded for qualitative review only and must never be aggregated into an accuracy figure"
+  },
+  "documented_limitation_vs_defect": {
+    "run_id": "phase4.5-laya-real-20260926T092215Z",
+    "corpus_content_hash": "a3a5102aee5a948fed6aee86c3cd3c8a6c392bf70f7b5d34ab3795073a2c1a2b",
+    "schema_version": "1.0",
+    "decision_type": "documented_limitation_vs_defect",
+    "model_identifier": "laya:0.3.20:convaiinnovations/laya-typed-decisions",
+    "blocks": {
+      "overall": {
+        "run_id": "phase4.5-laya-real-20260926T092215Z",
+        "corpus_content_hash": "a3a5102aee5a948fed6aee86c3cd3c8a6c392bf70f7b5d34ab3795073a2c1a2b",
+        "schema_version": "1.0",
+        "decision_type": "documented_limitation_vs_defect",
+        "model_identifier": "laya:0.3.20:convaiinnovations/laya-typed-decisions",
+        "n": 5,
+        "valid_predictions": 5,
+        "invalid_predictions": 0,
+        "correct": 3,
+        "incorrect": 2,
+        "accuracy": 0.6,
+        "coverage": 1.0,
+        "per_class_counts": {
+          "defect": 2,
+          "deliberate": 3
+        },
+        "confusion_matrix": {
+          "defect": {
+            "defect": 1,
+            "deliberate": 1
+          },
+          "deliberate": {
+            "defect": 1,
+            "deliberate": 2
+          }
+        },
+        "latency_ms": {
+          "available": false
+        },
+        "input_tokens": {
+          "available": true,
+          "n": 5,
+          "mean": 172.2,
+          "min": 155,
+          "max": 191
+        },
+        "output_tokens": {
+          "available": true,
+          "n": 5,
+          "mean": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "calibration": {
+          "available": true,
+          "n": 5,
+          "expected_calibration_error": 0.15632
+        },
+        "binary_scoring_ineligible_ids": [
+          "ENV-DP16-03",
+          "JOSS-DP16-01",
+          "ZEUS-DP16-02"
+        ]
+      },
+      "positive_match": {
+        "run_id": "phase4.5-laya-real-20260926T092215Z",
+        "corpus_content_hash": "a3a5102aee5a948fed6aee86c3cd3c8a6c392bf70f7b5d34ab3795073a2c1a2b",
+        "schema_version": "1.0",
+        "decision_type": "documented_limitation_vs_defect",
+        "model_identifier": "laya:0.3.20:convaiinnovations/laya-typed-decisions",
+        "n": 4,
+        "valid_predictions": 4,
+        "invalid_predictions": 0,
+        "correct": 3,
+        "incorrect": 1,
+        "accuracy": 0.75,
+        "coverage": 1.0,
+        "per_class_counts": {
+          "defect": 1,
+          "deliberate": 3
+        },
+        "confusion_matrix": {
+          "defect": {
+            "defect": 1,
+            "deliberate": 0
+          },
+          "deliberate": {
+            "defect": 1,
+            "deliberate": 2
+          }
+        },
+        "latency_ms": {
+          "available": false
+        },
+        "input_tokens": {
+          "available": true,
+          "n": 4,
+          "mean": 172.25,
+          "min": 155,
+          "max": 191
+        },
+        "output_tokens": {
+          "available": true,
+          "n": 4,
+          "mean": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "calibration": {
+          "available": true,
+          "n": 4,
+          "expected_calibration_error": 0.310175
+        },
+        "binary_scoring_ineligible_ids": [
+          "ENV-DP16-03"
+        ],
+        "partition": "positive_match"
+      },
+      "absence_based": {
+        "run_id": "phase4.5-laya-real-20260926T092215Z",
+        "corpus_content_hash": "a3a5102aee5a948fed6aee86c3cd3c8a6c392bf70f7b5d34ab3795073a2c1a2b",
+        "schema_version": "1.0",
+        "decision_type": "documented_limitation_vs_defect",
+        "model_identifier": "laya:0.3.20:convaiinnovations/laya-typed-decisions",
+        "n": 1,
+        "valid_predictions": 1,
+        "invalid_predictions": 0,
+        "correct": 0,
+        "incorrect": 1,
+        "accuracy": 0.0,
+        "coverage": 1.0,
+        "per_class_counts": {
+          "defect": 1,
+          "deliberate": 0
+        },
+        "confusion_matrix": {
+          "defect": {
+            "defect": 0,
+            "deliberate": 1
+          },
+          "deliberate": {
+            "defect": 0,
+            "deliberate": 0
+          }
+        },
+        "latency_ms": {
+          "available": false
+        },
+        "input_tokens": {
+          "available": true,
+          "n": 1,
+          "mean": 172.0,
+          "min": 172,
+          "max": 172
+        },
+        "output_tokens": {
+          "available": true,
+          "n": 1,
+          "mean": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "calibration": {
+          "available": true,
+          "n": 1,
+          "expected_calibration_error": 0.5205
+        },
+        "binary_scoring_ineligible_ids": [
+          "JOSS-DP16-01"
+        ],
+        "partition": "absence_based"
+      }
+    }
+  },
+  "human_acceptance_required": {
+    "run_id": "phase4.5-laya-real-20260926T092215Z",
+    "corpus_content_hash": "a3a5102aee5a948fed6aee86c3cd3c8a6c392bf70f7b5d34ab3795073a2c1a2b",
+    "schema_version": "1.0",
+    "decision_type": "human_acceptance_required",
+    "model_identifier": "laya:0.3.20:convaiinnovations/laya-typed-decisions",
+    "n": 10,
+    "valid_predictions": 10,
+    "invalid_predictions": 0,
+    "correct": 3,
+    "incorrect": 7,
+    "accuracy": 0.3,
+    "coverage": 1.0,
+    "per_class_counts": {
+      "required": 9,
+      "sufficient_without": 1
+    },
+    "confusion_matrix": {
+      "required": {
+        "required": 2,
+        "sufficient_without": 7
+      },
+      "sufficient_without": {
+        "required": 0,
+        "sufficient_without": 1
+      }
+    },
+    "latency_ms": {
+      "available": false
+    },
+    "input_tokens": {
+      "available": true,
+      "n": 10,
+      "mean": 117.5,
+      "min": 102,
+      "max": 143
+    },
+    "output_tokens": {
+      "available": true,
+      "n": 10,
+      "mean": 0.0,
+      "min": 0,
+      "max": 0
+    },
+    "calibration": {
+      "available": true,
+      "n": 10,
+      "expected_calibration_error": 0.27118
+    },
+    "binary_scoring_ineligible_ids": [
+      "JOSS-DP23-05",
+      "KC-DP23-01"
+    ]
+  },
+  "agent_verification_applicable": {
+    "run_id": "phase4.5-laya-real-20260926T092215Z",
+    "corpus_content_hash": "a3a5102aee5a948fed6aee86c3cd3c8a6c392bf70f7b5d34ab3795073a2c1a2b",
+    "schema_version": "1.0",
+    "decision_type": "agent_verification_applicable",
+    "model_identifier": "mixed (see per-block model_identifier)",
+    "blocks": {
+      "deterministic_prefilter_validation": {
+        "run_id": "phase4.5-laya-real-20260926T092215Z",
+        "corpus_content_hash": "a3a5102aee5a948fed6aee86c3cd3c8a6c392bf70f7b5d34ab3795073a2c1a2b",
+        "schema_version": "1.0",
+        "decision_type": "agent_verification_applicable",
+        "model_identifier": "deterministic_prefilter_v1.0",
+        "n": 5,
+        "valid_predictions": 4,
+        "invalid_predictions": 1,
+        "correct": 4,
+        "incorrect": 0,
+        "accuracy": 1.0,
+        "coverage": 0.8,
+        "per_class_counts": {
+          "applicable": 4,
+          "not_applicable": 1
+        },
+        "confusion_matrix": {
+          "applicable": {
+            "applicable": 3,
+            "not_applicable": 0
+          },
+          "not_applicable": {
+            "applicable": 0,
+            "not_applicable": 1
+          }
+        },
+        "latency_ms": {
+          "available": false
+        },
+        "input_tokens": {
+          "available": false
+        },
+        "output_tokens": {
+          "available": false
+        },
+        "calibration": {
+          "available": false
+        },
+        "binary_scoring_ineligible_ids": [
+          "ZEUS-DP22-01"
+        ],
+        "partition": "deterministic_prefilter_validation",
+        "prefilter_routing": {
+          "partition_rows_total": 6,
+          "handled": 4,
+          "deferred": 2,
+          "deferred_ids": [
+            "KRIY-DP22-02",
+            "ZEUS-DP22-01"
+          ],
+          "deferred_routed_to_system1": false,
+          "binary_scoring_eligible": 5,
+          "scored": 4
+        }
+      },
+      "system1_judgment": {
+        "run_id": "phase4.5-laya-real-20260926T092215Z",
+        "corpus_content_hash": "a3a5102aee5a948fed6aee86c3cd3c8a6c392bf70f7b5d34ab3795073a2c1a2b",
+        "schema_version": "1.0",
+        "decision_type": "agent_verification_applicable",
+        "model_identifier": "laya:0.3.20:convaiinnovations/laya-typed-decisions",
+        "n": 1,
+        "valid_predictions": 1,
+        "invalid_predictions": 0,
+        "correct": 0,
+        "incorrect": 1,
+        "accuracy": 0.0,
+        "coverage": 1.0,
+        "per_class_counts": {
+          "applicable": 1,
+          "not_applicable": 0
+        },
+        "confusion_matrix": {
+          "applicable": {
+            "applicable": 0,
+            "not_applicable": 1
+          },
+          "not_applicable": {
+            "applicable": 0,
+            "not_applicable": 0
+          }
+        },
+        "latency_ms": {
+          "available": false
+        },
+        "input_tokens": {
+          "available": true,
+          "n": 1,
+          "mean": 177.0,
+          "min": 177,
+          "max": 177
+        },
+        "output_tokens": {
+          "available": true,
+          "n": 1,
+          "mean": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "calibration": {
+          "available": true,
+          "n": 1,
+          "expected_calibration_error": 0.5359
+        },
+        "binary_scoring_ineligible_ids": [
+          "ZEUS-DP22-02"
+        ],
+        "partition": "system1_judgment",
+        "sample_size_warning": true
+      }
+    }
+  }
+}
