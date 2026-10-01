@@ -156,9 +156,9 @@ what can be inferred from differences between providers.**
 
 ## Reproduction
 
-These commands reproduce the historical record only at commit `55e8968`, which still contains
-the original corpus. At later revisions the corpus hash differs (ADR-008) and
-`10_rescore_offline.py` aborts on its strict corpus-hash check.
+These commands reproduce the historical record at commit `55e8968` (or any later revision before
+`6299603`, which still contains the original corpus). From `6299603` onward, the corpus hash
+differs (ADR-008), and `10_rescore_offline.py` aborts at its corpus-hash check.
 
 These commands need no model or network:
 

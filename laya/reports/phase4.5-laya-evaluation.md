@@ -262,9 +262,9 @@ These are recorded as inputs only. None is an adoption or rejection decision.
 
 ## Reproduction
 
-These commands reproduce the historical record only at commit `65e99aa`, which still contains
-the original corpus. At later revisions the corpus hash differs (ADR-008) and
-`10_rescore_offline.py` aborts on its strict corpus-hash check.
+These commands reproduce the historical record at commit `65e99aa` (or any later revision before
+`6299603`, which still contains the original corpus). From `6299603` onward, the corpus hash
+differs (ADR-008), and `10_rescore_offline.py` aborts at its corpus-hash check.
 
 These commands need no model, network or GPU:
 
