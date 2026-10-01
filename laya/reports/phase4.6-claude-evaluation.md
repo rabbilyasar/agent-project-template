@@ -5,6 +5,15 @@ under the Phase 4.2 evaluation contracts and the ADR-007 eligible-only scoring p
 no adoption, ranking, routing or model-selection decision. The Laya comparison section is a
 row-by-row statement of fact, not a verdict.
 
+> **Historical record (ADR-008, 2026-10-01).** These figures were computed against the
+> original corpus (`a3a5102a…`) under scoring policy `eligible_only_v1`. ADR-008 subsequently
+> made AGENT-DP23-01 ineligible, leaving DP-23 with only one eligible ground-truth class.
+> DP-23 is therefore now not scored. DP-11, DP-16, and DP-22 figures are unchanged. See the
+> corrected-corpus v2 rescore artifact at
+> `laya/results/phase4.6-claude-claude-haiku-4-5-20251001-real-20260930T165609Z--rescore-eligible-only-v2-corrected-corpus/`.
+> The reproduction commands below describe the historical run and work only with the
+> corresponding historical code revision.
+
 **Result:** on this 16-row eligible scored subset of the Phase 4.1 corpus, Claude Haiku 4.5
 produced 16/16 correct predictions under the Phase 4.2 evaluation contracts. This is not a
 general accuracy figure, not a production accuracy figure, and not evidence that Claude is
@@ -196,6 +205,10 @@ them.
 
 ## Reproduction
 
+These commands reproduce the historical record only at commit `55e8968`, which still contains
+the original corpus. At later revisions the corpus hash differs (ADR-008) and
+`10_rescore_offline.py` aborts on its strict corpus-hash check.
+
 These commands need no model or network:
 
 ```sh
@@ -206,4 +219,4 @@ python3 laya/harness/lib/09_run_evaluation_claude.py --plan-only   # preflight +
 ```
 
 The aggregate can be recomputed offline from `predictions.jsonl` with the committed evaluator.
-`10_rescore_offline.build_reports` produces a report identical to `aggregate_report.json`.
+The `build_reports` command reproduces the historical aggregate at commit `55e8968`.

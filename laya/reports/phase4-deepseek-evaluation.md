@@ -4,6 +4,15 @@ Formal record of the historical Phase 4 DeepSeek run, rescored offline under the
 eligible-only policy. It is descriptive only: it contains no ranking and no adoption, routing or
 model-selection decision. No DeepSeek or other API call was made to produce it.
 
+> **Historical record (ADR-008, 2026-10-01).** These figures were computed against the
+> original corpus (`a3a5102a…`) under scoring policy `eligible_only_v1`. ADR-008 subsequently
+> made AGENT-DP23-01 ineligible, leaving DP-23 with only one eligible ground-truth class.
+> DP-23 is therefore now not scored. DP-11, DP-16, and DP-22 figures are unchanged. See the
+> corrected-corpus v2 rescore artifact at
+> `laya/results/phase4-deepseek-flash-real-20260926T101940Z--rescore-eligible-only-v2-corrected-corpus/`.
+> The reproduction commands below describe the historical run and work only with the
+> corresponding historical code revision.
+
 **Result:** under the ADR-007 eligible-only scoring policy, DeepSeek produced 14/16 correct
 predictions on the 16 eligible scored System-1 decisions in this historical Phase 4 evaluation.
 This is not a general accuracy figure and not a production accuracy figure.
@@ -146,6 +155,10 @@ what can be inferred from differences between providers.**
 - **Scope:** no claim of generalization beyond this corpus or of production readiness.
 
 ## Reproduction
+
+These commands reproduce the historical record only at commit `55e8968`, which still contains
+the original corpus. At later revisions the corpus hash differs (ADR-008) and
+`10_rescore_offline.py` aborts on its strict corpus-hash check.
 
 These commands need no model or network:
 

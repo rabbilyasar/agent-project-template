@@ -1,0 +1,42 @@
+{
+  "derived_artifact_id": "phase4.5-laya-real-20260926T092215Z--rescore-eligible-only-v2-corrected-corpus",
+  "derivation": "offline re-aggregation of preserved predictions; no model inference, no adapter, no network",
+  "model_inference_performed": false,
+  "scoring_policy": "eligible_only_v2 (ADR-007 eligibility, ADR-008 clean-include rows and DP-23 class coverage)",
+  "source_run_id": "phase4.5-laya-real-20260926T092215Z",
+  "source_run_dir": "laya/results/phase4.5-laya-real-20260926T092215Z",
+  "source_artifact_sha256": {
+    "predictions.jsonl": "69a4f174b5149d2bb90f756a98cacb376599c913afaed6e2674f1bd49ef13020",
+    "manifest.json": "1899e689a5e4ea5df094c20a59bae803d54f2e22c15d765dc00e152aa67288dd",
+    "aggregate_report.json": "ad58df67d9e05e76fe5e3393f8802df8c78e2aa33d8f154402f61466f10ee33b"
+  },
+  "source_artifacts_modified": false,
+  "corpus_content_hash": "3e52a365c337f5bae70a20ce1ade19dd7153da35aed47d991eaa099fefd87e21",
+  "prediction_corpus_content_hash": "a3a5102aee5a948fed6aee86c3cd3c8a6c392bf70f7b5d34ab3795073a2c1a2b",
+  "scoring_corpus_content_hash": "3e52a365c337f5bae70a20ce1ade19dd7153da35aed47d991eaa099fefd87e21",
+  "corpus_correction": {
+    "adr": "ADR-008",
+    "original_corpus_sha256": "a3a5102aee5a948fed6aee86c3cd3c8a6c392bf70f7b5d34ab3795073a2c1a2b",
+    "original_corpus_git_rev": "383390a2bf56096d673ac0cf0fa3cc64180664da",
+    "corrected_corpus_sha256": "3e52a365c337f5bae70a20ce1ade19dd7153da35aed47d991eaa099fefd87e21",
+    "candidate_id": "AGENT-DP23-01",
+    "field": "eligible_for_binary_scoring",
+    "from": true,
+    "to": false,
+    "original_corpus_source": "git show 383390a2bf56096d673ac0cf0fa3cc64180664da:laya/corpus/phase-4.1-decision-corpus.jsonl",
+    "verified": "corpora differ only in this one field of this one row"
+  },
+  "skipped_excluded_candidate_ids": [],
+  "result_schema_version": "1.0",
+  "deterministic_prefilter_rule_version": "1.0",
+  "source_model_identifier": "laya:0.3.20:convaiinnovations/laya-typed-decisions",
+  "harness_git_commit": "6299603b86ccc9f1b3d8925fc167af223a9b8225",
+  "harness_uncommitted_changes": false,
+  "scoring_module_sha256": {
+    "05_calibration.py": "1333b883db8aa9181efea50e5383986e857136b4bb7237b44157b4b6607560cc",
+    "06_score.py": "491c49ecea2fb8173f3ae527bf375a3403aaea52694c98a887f4a88bb7244ce7",
+    "07_aggregate_report.py": "206ba09c4f9040dd59d2599881ec99824e7b1e77f49dd7262d27f83cd692e3a5",
+    "10_rescore_offline.py": "fe482e33609f17d31b99ab08a6211d6ef22a26d7d4fc29e28e58316c507d8dcf"
+  },
+  "generated_at": "2026-10-01T11:44:44.662466+00:00"
+}
