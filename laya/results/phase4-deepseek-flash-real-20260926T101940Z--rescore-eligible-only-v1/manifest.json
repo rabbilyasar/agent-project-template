@@ -1,0 +1,27 @@
+{
+  "derived_artifact_id": "phase4-deepseek-flash-real-20260926T101940Z--rescore-eligible-only-v1",
+  "derivation": "offline re-aggregation of preserved predictions; no model inference, no adapter, no network",
+  "model_inference_performed": false,
+  "scoring_policy": "eligible_only_v1 (ADR-007)",
+  "source_run_id": "phase4-deepseek-flash-real-20260926T101940Z",
+  "source_run_dir": "laya/results/phase4-deepseek-flash-real-20260926T101940Z",
+  "source_artifact_sha256": {
+    "predictions.jsonl": "23750786f62f9e38d72d5da6f3be755e45b274f1a7b07128b71d66a2dba32916",
+    "manifest.json": "a6c45f8865d62da7d196880cd344593988907380cc77cc9f4c741608a56646b9",
+    "aggregate_report.json": "e906b5a6db535ffd14038d5bac846e77ba742ab1be6e29f7433b9d81eeb6644f"
+  },
+  "source_artifacts_modified": false,
+  "corpus_content_hash": "a3a5102aee5a948fed6aee86c3cd3c8a6c392bf70f7b5d34ab3795073a2c1a2b",
+  "result_schema_version": "1.0",
+  "deterministic_prefilter_rule_version": "1.0",
+  "source_model_identifier": "deepseek:deepseek-flash:thinking-disabled:effort-none",
+  "harness_git_commit": "55e8968df922d9efda18b0edb015c19034a912db",
+  "harness_uncommitted_changes": false,
+  "scoring_module_sha256": {
+    "05_calibration.py": "1333b883db8aa9181efea50e5383986e857136b4bb7237b44157b4b6607560cc",
+    "06_score.py": "491c49ecea2fb8173f3ae527bf375a3403aaea52694c98a887f4a88bb7244ce7",
+    "07_aggregate_report.py": "7fd60b7b06ffc38ead21086448ea8e2c17eb7b681ee457a91d8ffe086832f663",
+    "10_rescore_offline.py": "64d719744862bfa1e16caa698a611ab20dccc1ac0ce26a647a552ba8ff7b24ca"
+  },
+  "generated_at": "2026-09-30T19:34:34.031509+00:00"
+}
