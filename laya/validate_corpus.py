@@ -47,9 +47,9 @@ def check_schema_version():
     return []
 
 
-def load_rows():
+def load_rows(path=CORPUS_PATH):
     rows = []
-    with open(CORPUS_PATH, encoding="utf-8") as fh:
+    with open(path, encoding="utf-8") as fh:
         for i, line in enumerate(fh, 1):
             line = line.strip()
             if not line:
@@ -196,12 +196,18 @@ def check_unique_ids(rows):
 
 
 def check_inclusion_status_consistency(rows):
+    """Schema contract (ADR-008): eligible_for_binary_scoring may be true only for a row that
+    is both clean_or_borderline == "clean" and inclusion_status == "include"."""
     errors = []
     for r in rows:
-        if r["inclusion_status"] == "exclude" and r.get("eligible_for_binary_scoring"):
-            errors.append(f"{r['candidate_id']}: excluded row must not be eligible_for_binary_scoring")
-        if r["clean_or_borderline"] == "confounded" and r.get("eligible_for_binary_scoring"):
-            errors.append(f"{r['candidate_id']}: confounded row must not be eligible_for_binary_scoring")
+        if not r.get("eligible_for_binary_scoring"):
+            continue
+        if r["inclusion_status"] != "include":
+            errors.append(f"{r['candidate_id']}: inclusion_status={r['inclusion_status']!r} row must not be "
+                          f"eligible_for_binary_scoring (only clean, include rows may be eligible)")
+        if r["clean_or_borderline"] != "clean":
+            errors.append(f"{r['candidate_id']}: clean_or_borderline={r['clean_or_borderline']!r} row must not be "
+                          f"eligible_for_binary_scoring (only clean, include rows may be eligible)")
     return errors
 
 

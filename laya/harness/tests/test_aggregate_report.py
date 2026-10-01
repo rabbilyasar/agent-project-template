@@ -75,10 +75,51 @@ def main() -> int:
                    dp16_report["blocks"]["absence_based"]["accuracy"] == 1.0))
 
     # --- DP-23: scored only against normative_label ---
-    dp23_rows = {"N1": dp23_row("N1", normative_label="required", empirical_label="bare_acknowledgment", relationship="diverge")}
-    dp23_results = [canonical_result("N1", "human_acceptance_required", "required")]
+    dp23_rows = {
+        "N1": dp23_row("N1", normative_label="required", empirical_label="bare_acknowledgment", relationship="diverge"),
+        "N2": dp23_row("N2", normative_label="sufficient_without"),
+    }
+    dp23_results = [
+        canonical_result("N1", "human_acceptance_required", "required"),
+        canonical_result("N2", "human_acceptance_required", "sufficient_without"),
+    ]
     dp23_report = aggregate.build_report("human_acceptance_required", dp23_results, dp23_rows, "run-4", "hash", "1.0", "m1")
     checks.append(("DP-23 report scores against normative_label despite empirical divergence", dp23_report["accuracy"] == 1.0))
+    checks.append(("two-class DP-23 block is scored and says so",
+                   dp23_report["not_scored"] is False
+                   and dp23_report["eligible_ground_truth_classes"] == ["required", "sufficient_without"]))
+
+    # --- ADR-008: single-class eligible DP-23 never yields an accuracy figure ---
+    one_class_rows = {
+        "R1": dp23_row("R1", normative_label="required"),
+        "R2": dp23_row("R2", normative_label="required"),
+        "R3": dp23_row("R3", normative_label="required"),
+        # The only other class is ineligible, so it must not count toward class coverage.
+        "SB": {**dp23_row("SB", normative_label="sufficient_without"), "clean_or_borderline": "borderline",
+               "eligible_for_binary_scoring": False},
+    }
+    one_class_results = [
+        canonical_result("R1", "human_acceptance_required", "required"),
+        canonical_result("R2", "human_acceptance_required", "sufficient_without"),
+        canonical_result("R3", "human_acceptance_required", None, valid=False),
+        canonical_result("SB", "human_acceptance_required", "sufficient_without"),
+    ]
+    one = aggregate.build_report("human_acceptance_required", one_class_results, one_class_rows, "run-4b", "hash", "1.0", "m1")
+    checks.append(("single-class DP-23 is not_scored with a machine-readable reason",
+                   one["not_scored"] is True and one["not_scored_reason_code"] == "insufficient_eligible_class_coverage"
+                   and bool(one["reason"])))
+    checks.append(("single-class DP-23 withholds correctness metrics (None, never 0)",
+                   one["accuracy"] is None and one["correct"] is None and one["incorrect"] is None
+                   and one["confusion_matrix"] is None and one["calibration"]["available"] is False))
+    checks.append(("single-class DP-23 keeps descriptive counts and validity",
+                   one["n"] == 3 and one["valid_predictions"] == 2 and one["invalid_predictions"] == 1
+                   and abs(one["coverage"] - 2 / 3) < 1e-9 and one["per_class_counts"] == {"required": 3, "sufficient_without": 0}
+                   and one["predicted_value_counts"] == {"required": 1, "sufficient_without": 1}))
+    checks.append(("ineligible minority-class row does not create class coverage",
+                   one["eligible_ground_truth_classes"] == ["required"] and one["binary_scoring_ineligible_ids"] == ["SB"]))
+    empty = aggregate.build_report("human_acceptance_required", [one_class_results[3]], one_class_rows, "run-4c", "hash", "1.0", "m1")
+    checks.append(("DP-23 with no eligible rows is not_scored, not 0% accurate",
+                   empty["not_scored"] is True and empty["n"] == 0 and empty["accuracy"] is None))
 
     # --- ADR-007: eligible_for_binary_scoring is authoritative for binary scoring ---
     def borderline(row: dict) -> dict:
@@ -104,15 +145,17 @@ def main() -> int:
 
     elig_dp23_rows = {
         "N1": dp23_row("N1", normative_label="required"),
+        "N2": dp23_row("N2", normative_label="sufficient_without"),
         "NB": borderline(dp23_row("NB", normative_label="required")),
     }
     elig_dp23_results = [
         canonical_result("N1", "human_acceptance_required", "required"),
+        canonical_result("N2", "human_acceptance_required", "sufficient_without"),
         canonical_result("NB", "human_acceptance_required", "sufficient_without"),  # would be incorrect
     ]
     elig_dp23 = aggregate.build_report("human_acceptance_required", elig_dp23_results, elig_dp23_rows, "run-6", "hash", "1.0", "m1")
     checks.append(("borderline ineligible DP-23 row does not contribute to normative accuracy",
-                   elig_dp23["n"] == 1 and elig_dp23["accuracy"] == 1.0))
+                   elig_dp23["n"] == 2 and elig_dp23["accuracy"] == 1.0))
 
     elig_dp22_rows = {
         "S1": dp22_row("S1", "system1_judgment", "applicable"),

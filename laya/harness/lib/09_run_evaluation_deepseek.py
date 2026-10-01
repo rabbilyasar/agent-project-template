@@ -51,7 +51,7 @@ from adapter_base import build_canonical_result  # noqa: E402
 RESULT_SCHEMA_VERSION = "1.0"
 DP22_TYPE = "agent_verification_applicable"
 NON_DP22_TYPES = ["trivial_vs_staged", "documented_limitation_vs_defect", "human_acceptance_required"]
-EXPECTED_CORPUS_HASH = "a3a5102aee5a948fed6aee86c3cd3c8a6c392bf70f7b5d34ab3795073a2c1a2b"
+EXPECTED_CORPUS_HASH = "3e52a365c337f5bae70a20ce1ade19dd7153da35aed47d991eaa099fefd87e21"
 EXPECTED_DP22_SYSTEM1_IDS = {"ZEUS-DP22-02", "ZEUS-DP22-03"}
 
 DEEPSEEK_MODEL = "deepseek-flash"

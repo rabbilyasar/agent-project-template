@@ -64,7 +64,7 @@ def load_corpus(path: Path = CORPUS_PATH, schema_path: Path = SCHEMA_PATH) -> tu
         raise CorpusLoadError(f"corpus schema_version={version!r}, expected {EXPECTED_SCHEMA_VERSION!r}")
 
     try:
-        raw_rows = _vc.load_rows()
+        raw_rows = _vc.load_rows(path)
     except SystemExit as e:
         raise CorpusLoadError(str(e)) from e
 

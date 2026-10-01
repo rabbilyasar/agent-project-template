@@ -392,6 +392,101 @@ Keeping exclude-only scoring and documenting the flag as DP-11-only was rejected
 the schema's own definition of the flag. Rewriting the historical reports in place was rejected
 under ADR-006.
 
+### ADR-008 — Clean-include eligibility, DP-23 class coverage, and the AGENT-DP23-01 correction
+
+**Status:** Accepted
+
+**Date:** 2026-10-01
+
+**Context**
+
+The schema defines `eligible_for_binary_scoring` as "true only for clean, include rows in
+decisions with real coverage of more than one class". `laya/validate_corpus.py` rejected only
+eligible `exclude` and `confounded` rows. `AGENT-DP23-01` is `clean_or_borderline: borderline`,
+`inclusion_status: include`, yet was eligible. It was the only eligible `sufficient_without` row
+in DP-23.
+
+The authoring record (the Phase 4.1 construction session, 2026-09-25) explains why the row is
+borderline. The normative label was judged only "arguably" `sufficient_without`, and it conflicts
+with the workflow decision actually taken (acceptance marked PENDING). That is ambiguity in the
+label itself, not in the evidence. The `true` flag was set by hand, per row. The schema's
+contrary wording was written by the same author 31 seconds later. No exception is recorded in
+the authoring session or the repository.
+
+Without that row, every eligible DP-23 row is `required`. A constant `required` guess then scores
+100%, so a DP-23 accuracy figure would measure nothing.
+
+**Decision**
+
+1. **Correction.** `AGENT-DP23-01.eligible_for_binary_scoring` is changed from `true` to
+   `false`. No other field changes. The row stays `include`/`borderline` for qualitative analysis.
+   The corpus hash changes from `a3a5102aee5a948fed6aee86c3cd3c8a6c392bf70f7b5d34ab3795073a2c1a2b`
+   to `3e52a365c337f5bae70a20ce1ade19dd7153da35aed47d991eaa099fefd87e21`.
+2. **Eligibility contract.** A row may be eligible only if it is both `clean_or_borderline ==
+   "clean"` and `inclusion_status == "include"`. This is enforced in
+   `check_inclusion_status_consistency`, which the corpus loader runs on every load.
+3. **DP-23 class coverage.** The DP-23 block is binary-scored only when its eligible rows cover
+   at least two `normative_label` classes. Coverage is taken from the corpus labels, never from
+   predictions. Otherwise the block is `not_scored: true`, with
+   `not_scored_reason_code: "insufficient_eligible_class_coverage"` and a reason.
+   - Correctness fields (`accuracy`, `correct`, `incorrect`, `confusion_matrix`, calibration)
+     are withheld as null/unavailable, never 0.
+   - Counts, validity, coverage, `per_class_counts` and `predicted_value_counts` remain.
+   - This rule is enforced in `07_aggregate_report.build_human_acceptance_required_report`.
+   - The nine remaining eligible DP-23 rows keep `eligible_for_binary_scoring: true`. Row-level
+     eligibility decides which examples may take part in scoring; block-level class coverage
+     decides whether the block may produce an accuracy result at all.
+   - DP-11, DP-16 and DP-22 scoring are unchanged.
+4. **Historical rescore across the correction.** `10_rescore_offline.py` keeps its strict
+   corpus-hash check as the default. One explicit path,
+   `--adr008-eligibility-correction <original_sha256> <corrected_sha256>`, lets a run produced
+   against the original corpus be rescored against the corrected one. The path requires that:
+   - both stated hashes equal the pinned ones;
+   - the original corpus read from git (`383390a`) and the working corpus match those hashes;
+   - the two corpora differ in exactly this one field of this one row, with row identities,
+     row order, field order and every other value unchanged.
+
+   Output goes to a new sibling directory, `<run_id>--rescore-eligible-only-v2-corrected-corpus/`.
+   Its manifest records the prediction-corpus hash, the scoring-corpus hash, the correction and
+   the scoring policy `eligible_only_v2`.
+5. **Future runs.** The Claude and DeepSeek runners now expect the corrected corpus hash.
+
+**Rationale**
+
+The correction follows from the schema's existing wording and the row's own authoring evidence,
+not from its effect on any score. The effect is the same for all three evaluated systems: each
+loses one row it answered correctly. Withholding a single-class score enforces in code what the
+DP-11 precedent already established in the corpus contract: a decision type with clean coverage
+of only one class cannot produce a meaningful binary accuracy. Pinning the cross-corpus rescore to
+one verified field difference preserves ADR-006: a hash mismatch still aborts for any other
+difference.
+
+**Consequences**
+
+- **Historical evidence is unchanged.** All historical runs, their aggregates, the ADR-007
+  `--rescore-eligible-only-v1` artifacts and the Phase 4.5, Phase 4.6 and Phase 4 DeepSeek
+  reports stay byte-identical (ADR-006). Their figures were computed against the original corpus
+  `a3a5102a…` and must be cited as such.
+- **No new model evaluation.** The derived v2 rescores reuse the existing predictions.
+- **The v1 reproduction commands no longer work at `HEAD`.** The reports' instructions to rerun
+  `10_rescore_offline.py` for v1 now abort on the corpus hash; they reproduce only at the
+  commits recorded in those artifacts.
+- **DP-23 cannot be scored at all until the corpus has clean, eligible rows of more than one
+  class.** Future corpus expansion needs clean `sufficient_without` examples before DP-23 can
+  produce any binary result.
+- **This rule clarifies ADR-007 rather than replacing it.** ADR-007 still holds: the flag is
+  authoritative at scoring time. ADR-008 constrains which rows may carry the flag and adds a
+  block-level class-coverage requirement for DP-23.
+
+**Alternatives Considered**
+
+- **A documented exception for borderline rows.** Rejected: the borderline reason is ambiguity
+  in the label, and a machine-checkable exception would need a new schema field for one row.
+- **Applying the class-coverage rule to every block.** Deferred: DP-22 System-1 and DP-16
+  `absence_based` are also single-class at n=1, but changing their scoring was out of scope.
+- **A general hash-override flag for the rescore.** Rejected: it would weaken ADR-006 for every
+  future corpus change.
+
 ## Statuses
 
 - **Proposed** — under consideration.

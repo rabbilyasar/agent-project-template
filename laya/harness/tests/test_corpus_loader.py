@@ -37,7 +37,7 @@ def _write_jsonl(rows, tmp_dir: Path) -> Path:
 
 
 def _write_schema(tmp_dir: Path, version: str) -> Path:
-    path = tmp_dir / "schema.json"
+    path = tmp_dir / f"schema-{version}.json"
     path.write_text(json.dumps({"schema_version": version}), encoding="utf-8")
     return path
 
@@ -128,6 +128,26 @@ def main() -> int:
             checks.append(("post-decision evidence copied into model_facing_input raises CorpusLoadError", False))
         except load_corpus_mod.CorpusLoadError:
             checks.append(("post-decision evidence copied into model_facing_input raises CorpusLoadError", True))
+
+        # --- ADR-008: only clean, include rows may be eligible_for_binary_scoring ---
+        scorable_row = dict(
+            MINIMAL_ROW, candidate_id="SYN-05", decision_type="documented_limitation_vs_defect",
+            ground_truth_label="deliberate", evidence_polarity="positive_match", eligible_for_binary_scoring=True,
+        )
+        eligibility_cases = [
+            ("clean, include, eligible row loads", {}, True),
+            ("borderline, include, eligible row raises CorpusLoadError", {"clean_or_borderline": "borderline"}, False),
+            ("clean, exclude, eligible row raises CorpusLoadError", {"inclusion_status": "exclude"}, False),
+            ("borderline, include, ineligible row loads",
+             {"clean_or_borderline": "borderline", "eligible_for_binary_scoring": False}, True),
+        ]
+        for name, overrides, should_load in eligibility_cases:
+            corpus = _write_jsonl([dict(scorable_row, **overrides)], tmp_dir)
+            try:
+                load_corpus_mod.load_corpus(path=corpus, schema_path=good_schema)
+                checks.append((name, should_load))
+            except load_corpus_mod.CorpusLoadError as exc:
+                checks.append((name, not should_load and "only clean, include rows may be eligible" in str(exc)))
 
     failed = [name for name, ok in checks if not ok]
     if failed:

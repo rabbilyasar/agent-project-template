@@ -9,7 +9,9 @@ decision_type, applying the decision-specific composition rules approved for Pha
   validation, system1_judgment) -- NEVER combined into one metric or "overall" figure.
 - documented_limitation_vs_defect: overall + positive_match + absence_based, kept separate.
 - human_acceptance_required: one block, scored only against normative_label (enforced by
-  stage 6's resolve_target_field, which raises on any other target).
+  stage 6's resolve_target_field, which raises on any other target), and only when its
+  eligible rows cover at least two normative_label classes (ADR-008); otherwise the block is
+  not_scored with a machine-readable not_scored_reason_code.
 - Every scored block counts only rows whose corpus eligible_for_binary_scoring is true and
   whose inclusion_status is not exclude (ADR-007); the rest are listed by ID, not scored.
 
@@ -19,6 +21,7 @@ this slice and is not implemented here at all.
 from __future__ import annotations
 
 import sys
+from collections import Counter
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -188,14 +191,47 @@ def build_documented_limitation_vs_defect_report(
     }
 
 
+DP23_MIN_ELIGIBLE_CLASSES = 2
+DP23_UNSCORABLE_CODE = "insufficient_eligible_class_coverage"
+
+
 def build_human_acceptance_required_report(
     results: list[dict], corpus_rows_by_id: dict, run_id: str, corpus_content_hash: str,
     schema_version: str, model_identifier: str,
 ) -> dict:
-    return _block(
+    block = _block(
         "human_acceptance_required", results, corpus_rows_by_id, run_id, corpus_content_hash,
         schema_version, model_identifier, target_field="normative_label",
     )
+    # ADR-008: a binary accuracy over eligible rows that all share one normative_label only
+    # measures agreement with that class (a constant guess scores 100%), so it is withheld.
+    # Class coverage comes from the corpus labels of the eligible rows, never from predictions.
+    eligible_classes = sorted({
+        corpus_rows_by_id[r["candidate_id"]].get("normative_label") for r in results
+        if is_binary_scoring_eligible(corpus_rows_by_id[r["candidate_id"]])
+    } - {None})
+    block["eligible_ground_truth_classes"] = eligible_classes
+    if len(eligible_classes) >= DP23_MIN_ELIGIBLE_CLASSES:
+        block["not_scored"] = False
+        return block
+    eligible_ids = {r["candidate_id"] for r in results} - set(block["binary_scoring_ineligible_ids"])
+    block.update({
+        "not_scored": True,
+        "not_scored_reason_code": DP23_UNSCORABLE_CODE,
+        "reason": (
+            f"eligible rows cover {len(eligible_classes)} normative_label class(es) {eligible_classes}; "
+            f"binary scoring needs at least {DP23_MIN_ELIGIBLE_CLASSES} (ADR-008). Counts and prediction "
+            f"validity are descriptive only; correctness metrics are withheld, not zero"
+        ),
+        # Correctness-derived fields are withheld (None/unavailable), never reported as 0.
+        "correct": None, "incorrect": None, "accuracy": None, "confusion_matrix": None,
+        "calibration": {"available": False, "reason": DP23_UNSCORABLE_CODE},
+        "predicted_value_counts": dict(sorted(Counter(
+            r["predicted_value"] for r in results
+            if r["candidate_id"] in eligible_ids and r.get("valid_prediction")
+        ).items())),
+    })
+    return block
 
 
 _BUILDERS = {
